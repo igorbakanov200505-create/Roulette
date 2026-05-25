@@ -2,7 +2,6 @@ let db = [];
 let spinning = false;
 
 let settings = {
-  speed: 5,
   time: 5,
   theme: "space"
 };
@@ -12,16 +11,15 @@ const res = document.getElementById("res");
 const sound = document.getElementById("sound");
 
 fetch("games-db.json")
-.then(r => r.json())
-.then(data => {
-  db = data.games;
+.then(r=>r.json())
+.then(data=>{
+  db=data.games;
   render();
 });
 
-/* 🎴 */
 function render(){
-  r.innerHTML = "";
-  let loop = [];
+  r.innerHTML="";
+  let loop=[];
   for(let i=0;i<20;i++) loop.push(...db);
 
   loop.forEach(g=>{
@@ -33,13 +31,6 @@ function render(){
   });
 }
 
-/* 🎨 */
-function setTheme(t){
-  document.body.classList.remove("space","neon","dark");
-  document.body.classList.add(t);
-}
-
-/* 🎰 */
 function spin(){
   if(spinning) return;
   spinning=true;
@@ -75,7 +66,7 @@ function spin(){
   },50);
 }
 
-/* ⚙️ MODAL */
+/* ⚙️ */
 function openSettings(){
   document.getElementById("modal").style.display="flex";
 }
@@ -85,10 +76,9 @@ function closeSettings(){
 }
 
 function applySettings(){
-  settings.time=parseFloat(document.getElementById("time").value);
-  settings.speed=parseFloat(document.getElementById("speed").value);
+  settings.time=parseInt(document.getElementById("time").value);
   settings.theme=document.getElementById("themeSelect").value;
 
-  setTheme(settings.theme);
+  document.body.className=settings.theme;
   closeSettings();
 }
