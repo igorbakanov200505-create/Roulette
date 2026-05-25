@@ -128,30 +128,66 @@ opacity:0;
 transition:.3s;
 }
 
-/* 🔴 YOUTUBE */
-.yt{
+/* 🌐 соц иконки */
+.social{
 position:fixed;
-right:20px;
-top:20px;
-padding:10px 14px;
-background:red;
-color:#fff;
-text-decoration:none;
-border-radius:10px;
-font-weight:bold;
+width:52px;
+height:52px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:14px;
+background:rgba(255,255,255,0.06);
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,0.12);
+cursor:pointer;
+transition:.25s;
 z-index:1000;
 }
 
-/* 🟣 TWITCH */
-.tw{
-position:fixed;
+/* 🟣 Twitch слева */
+.social.twitch{
 left:20px;
 top:20px;
-padding:10px 14px;
-background:#7c3aed;
-color:#fff;
-text-decoration:none;
-border-radius:10px;
-font-weight:bold;
-z-index:1000;
+box-shadow:0 0 20px rgba(124,58,237,0.3);
+}
+
+/* 🔴 YouTube справа */
+.social.youtube{
+right:20px;
+top:20px;
+box-shadow:0 0 20px rgba(255,0,0,0.3);
+}
+
+/* hover эффект */
+.social:hover{
+transform:scale(1.12);
+}
+
+/* иконка */
+.icon{
+width:26px;
+height:26px;
+fill:white;
+}
+
+/* glow по темам */
+body.space .social.twitch{
+box-shadow:0 0 25px #ff00ff55;
+}
+
+body.space .social.youtube{
+box-shadow:0 0 25px #ff003355;
+}
+
+body.neon .social.twitch{
+box-shadow:0 0 25px #00ffff55;
+}
+
+body.neon .social.youtube{
+box-shadow:0 0 25px #00ffff33;
+}
+
+body.dark .social{
+box-shadow:none;
 }
