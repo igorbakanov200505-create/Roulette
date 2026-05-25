@@ -1,71 +1,17 @@
-/* 🌌 ОСНОВА */
 body{
 margin:0;
 overflow:hidden;
 font-family:Arial;
 color:#fff;
 background: radial-gradient(circle at top, #1a0033, #000 70%);
-transition:.4s;
 }
 
-/* 🎨 ТЕМЫ */
-body.space{
-background: radial-gradient(circle at top, #1a0033, #000 70%);
---glow:#ff00ff;
-}
+/* 🌌 темы */
+body.space{--glow:#ff00ff;}
+body.neon{--glow:#00ffff;}
+body.dark{--glow:#666;}
 
-body.neon{
-background: radial-gradient(circle at top, #0f0020, #000 70%);
---glow:#00ffff;
-}
-
-body.dark{
-background: radial-gradient(circle at top, #111, #000 70%);
---glow:#888;
-}
-
-/* 🧠 ТЕКСТ */
-.title{
-position:absolute;
-top:10px;
-left:50%;
-transform:translateX(-50%);
-opacity:.8;
-}
-
-/* 🎛 кнопки тем */
-.themes{
-position:absolute;
-top:10px;
-left:80px;
-display:flex;
-gap:8px;
-}
-
-.themes button{
-background:#222;
-color:#fff;
-border:1px solid #444;
-padding:6px 10px;
-border-radius:8px;
-cursor:pointer;
-}
-
-/* 🎰 SPIN */
-.spin{
-position:absolute;
-top:50px;
-left:50%;
-transform:translateX(-50%);
-padding:12px 36px;
-border:none;
-border-radius:10px;
-background:#7c3aed;
-color:#fff;
-cursor:pointer;
-}
-
-/* 🎡 РУЛЕТКА */
+/* 🎰 рулетка */
 .main{
 position:absolute;
 left:50%;
@@ -82,12 +28,10 @@ backdrop-filter:blur(12px);
 .pointer{
 position:absolute;
 left:50%;
-top:0;
-transform:translateX(-50%);
 width:4px;
 height:100%;
 background:var(--glow);
-box-shadow:0 0 20px var(--glow);
+transform:translateX(-50%);
 z-index:5;
 }
 
@@ -98,24 +42,62 @@ padding:40px;
 will-change:transform;
 }
 
-/* 🎴 карточки */
 .card{
 min-width:320px;
 height:150px;
-border-radius:14px;
 display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
 background:rgba(255,255,255,.05);
-border:1px solid rgba(255,255,255,.1);
+border-radius:14px;
 }
 
-.badge{
-font-size:12px;
-opacity:.7;
-margin-top:6px;
+/* 🎛 spin */
+.spin{
+position:absolute;
+top:50px;
+left:50%;
+transform:translateX(-50%);
+padding:12px 30px;
+background:#7c3aed;
+border:none;
+border-radius:10px;
+cursor:pointer;
 }
+
+/* ⚙️ кнопка */
+.settings-btn{
+position:fixed;
+bottom:20px;
+right:20px;
+width:50px;
+height:50px;
+border-radius:50%;
+background:#222;
+color:#fff;
+border:none;
+font-size:22px;
+cursor:pointer;
+}
+
+/* 🌐 соц */
+.social{
+position:fixed;
+width:40px;
+height:40px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:10px;
+background:rgba(255,255,255,.08);
+text-decoration:none;
+color:#fff;
+font-weight:bold;
+}
+
+.twitch{left:20px;top:20px;background:#7c3aed;}
+.youtube{right:20px;top:20px;background:#ff0000;}
 
 /* 🎯 результат */
 .result{
@@ -123,71 +105,27 @@ position:absolute;
 left:50%;
 bottom:40px;
 transform:translateX(-50%);
-font-size:26px;
 opacity:0;
-transition:.3s;
+font-size:24px;
 }
 
-/* 🌐 соц иконки */
-.social{
+/* ⚙️ MODAL */
+.modal{
 position:fixed;
-width:52px;
-height:52px;
-display:flex;
+inset:0;
+background:rgba(0,0,0,.7);
+display:none;
 align-items:center;
 justify-content:center;
+}
+
+.modal-box{
+width:320px;
+padding:20px;
 border-radius:14px;
-background:rgba(255,255,255,0.06);
-backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,0.12);
-cursor:pointer;
-transition:.25s;
-z-index:1000;
-}
-
-/* 🟣 Twitch слева */
-.social.twitch{
-left:20px;
-top:20px;
-box-shadow:0 0 20px rgba(124,58,237,0.3);
-}
-
-/* 🔴 YouTube справа */
-.social.youtube{
-right:20px;
-top:20px;
-box-shadow:0 0 20px rgba(255,0,0,0.3);
-}
-
-/* hover эффект */
-.social:hover{
-transform:scale(1.12);
-}
-
-/* иконка */
-.icon{
-width:26px;
-height:26px;
-fill:white;
-}
-
-/* glow по темам */
-body.space .social.twitch{
-box-shadow:0 0 25px #ff00ff55;
-}
-
-body.space .social.youtube{
-box-shadow:0 0 25px #ff003355;
-}
-
-body.neon .social.twitch{
-box-shadow:0 0 25px #00ffff55;
-}
-
-body.neon .social.youtube{
-box-shadow:0 0 25px #00ffff33;
-}
-
-body.dark .social{
-box-shadow:none;
+background:#111;
+border:1px solid #333;
+display:flex;
+flex-direction:column;
+gap:10px;
 }
