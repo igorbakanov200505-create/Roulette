@@ -12,32 +12,6 @@
 <div class="title">РУЛЕТКА</div>
 
 <button class="spin"onclick="spin()">SPIN</button>
-<button class="settings"onclick="toggle()">⚙</button>
-
-<div class="panel"id="panel">
-
-<select onchange="setTheme(this.value)">
-<option value="space">SPACE</option>
-<option value="neon">NEON</option>
-<option value="dark">DARK</option>
-</select>
-
-<!-- ⚡ СКОРОСТЬ -->
-<label>Скорость</label>
-<input id="speed"type="range"min="2"max="8"step="0.5"value="4.5">
-
-<input id="name"placeholder="Игра">
-
-<select id="rarity">
-<option>обычная</option>
-<option>хорошая</option>
-<option>отличная</option>
-<option>легендарная</option>
-</select>
-
-<button onclick="add()">Добавить</button>
-
-</div>
 
 <div class="main">
 <div class="pointer"></div>
@@ -50,78 +24,60 @@
 
 <script>
 
-let db=JSON.parse(localStorage.getItem("db"))||[];
+let db=[];
 let spinning=false;
 
 const r=document.getElementById("r");
 const res=document.getElementById("res");
 const sound=document.getElementById("sound");
 
-/* load */
+/* LOAD DB */
 fetch("games-db.json")
 .then(x=>x.json())
-.then(d=>{
-if(db.length===0)db=d.games;
+.then(data=>{
+db=data.games;
 render();
 });
 
-/* save */
-function save(){
-localStorage.setItem("db",JSON.stringify(db));
-}
-
-/* theme FIX */
-function setTheme(t){
-document.body.className=t;
-}
-
-/* panel */
-function toggle(){
-let p=document.getElementById("panel");
-p.style.display=p.style.display==="block"?"none":"block";
-}
-
-/* add */
-function add(){
-let n=document.getElementById("name").value;
-let rr=document.getElementById("rarity").value;
-if(!n)return;
-
-db.push({name:n,rarity:rr});
-save();
-render();
-}
-
-/* render */
+/* RENDER — БЕСКОНЕЧНАЯ ЛЕНТА */
 function render(){
+
 r.innerHTML="";
-db.forEach((g,i)=>{
+
+let loop=[];
+
+/* 🔁 делаем длинную дорожку */
+for(let i=0;i<30;i++){
+loop.push(...db);
+}
+
+loop.forEach((g,i)=>{
+
 let el=document.createElement("div");
 el.className="card";
-el.dataset.index=i;
-el.innerHTML=`<div>${g.name}</div><div class="badge">${g.rarity}</div>`;
+
+/* индекс оригинальной базы */
+el.dataset.index=db.findIndex(x=>x.name===g.name);
+
+el.innerHTML=`
+<div>${g.name}</div>
+<div class="badge">${g.rarity}</div>
+`;
+
 r.appendChild(el);
 });
+
 }
 
-/* pick */
-function pick(){
-let pool=[];
-db.forEach(g=>{
-let w=1;
-if(g.rarity==="обычная")w=6;
-if(g.rarity==="хорошая")w=4;
-if(g.rarity==="отличная")w=2;
-if(g.rarity==="легендарная")w=0.5;
-for(let i=0;i<w*10;i++)pool.push(g);
-});
-return pool[Math.floor(Math.random()*pool.length)];
+/* 🎲 РАНДОМ */
+function pickIndex(){
+return Math.floor(Math.random()*db.length);
 }
 
-/* 🎰 SPIN FIX + SPEED */
+/* 🎰 SPIN FIXED */
 function spin(){
 
-if(spinning || db.length===0)return;
+if(spinning)return;
 spinning=true;
 
 res.style.opacity=0;
@@ -129,36 +85,38 @@ res.style.opacity=0;
 sound.currentTime=0;
 sound.play();
 
-/* SPEED FROM UI */
-let speed=document.getElementById("speed").value;
-document.documentElement.style.setProperty("--speed",speed+"s");
-
+/* reset */
 r.style.transition="none";
 r.style.transform="translateX(0px)";
 
 setTimeout(()=>{
 
-r.style.transition=`transform ${speed}s cubic-bezier(.05,.9,.1,1)`;
-
 const cards=[...document.querySelectorAll(".card")];
 
-const chosen=pick();
-const index=db.findIndex(g=>g.name===chosen.name);
-const target=cards[index];
+const targetGameIndex=pickIndex();
+
+/* ищем все карточки этой игры */
+const possible=cards.filter(c=>Number(c.dataset.index)===targetGameIndex);
+
+/* берём случайную из дублей */
+const target=possible[Math.floor(Math.random()*possible.length)];
 
 const main=document.querySelector(".main");
 const center=main.offsetWidth/2;
 
 const offset=
-target.offsetLeft +
-target.offsetWidth/2 -
+target.offsetLeft+
+target.offsetWidth/2-
 center;
 
+r.style.transition="transform 4.5s cubic-bezier(.05,.9,.1,1)";
 r.style.transform=`translateX(-${offset}px)`;
 
 setTimeout(()=>{
 
-res.innerHTML=`🎮 ${chosen.name}<br>${chosen.rarity}`;
+const game=db[targetGameIndex];
+
+res.innerHTML=`🎮 ${game.name}<br>${game.rarity}`;
 res.style.opacity=1;
 
 sound.pause();
@@ -166,9 +124,9 @@ sound.currentTime=0;
 
 spinning=false;
 
-},speed*1000);
+},4500);
 
-},40);
+},50);
 
 }
 
