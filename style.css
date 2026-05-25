@@ -101,3 +101,56 @@ font-size:26px;
 opacity:0;
 transition:.3s;
 }
+.themes{
+position:absolute;
+top:10px;
+left:10px;
+display:flex;
+gap:8px;
+}
+
+.themes button{
+background:#222;
+color:#fff;
+border:1px solid #444;
+padding:6px 10px;
+border-radius:8px;
+cursor:pointer;
+}
+
+.main{
+position:absolute;
+left:50%;
+top:55%;
+transform:translate(-50%,-50%);
+width:1500px;
+height:240px;
+overflow:hidden;
+border-radius:18px;
+background:rgba(255,255,255,.03);
+backdrop-filter:blur(12px);
+}
+
+.roulette{
+display:flex;
+gap:14px;
+padding:40px;
+will-change:transform;
+}
+
+.card{
+min-width:320px;
+height:150px;
+border-radius:14px;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+background:var(--card);
+border:1px solid rgba(255,255,255,.1);
+transition:transform .2s;
+}
+
+.card:hover{
+transform:scale(1.03);
+}
