@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"content="width=device-width,initial-scale=1.0">
+<title>Game Roulette</title>
+
+<style>
+
+body{
+margin:0;
+overflow:hidden;
+background:#05010a;
+font-family:Arial;
+color:#fff;
+}
+
+.bg{
+position:absolute;
+inset:0;
+background:radial-gradient(circle,#12002a,#000);
+}
+
+.main{
+position:absolute;
+left:50%;
+top:55%;
+transform:translate(-50%,-50%);
+width:1600px;
+height:260px;
+border-radius:25px;
+background:rgba(255,255,255,.03);
+backdrop-filter:blur(15px);
+overflow:hidden;
+}
+
+.pointer{
+position:absolute;
+left:50%;
+top:0;
+transform:translateX(-50%);
+width:4px;
+height:100%;
+background:#ff00ff;
+box-shadow:0 0 20px #ff00ff;
+}
+
+.roulette{
+display:flex;
+gap:18px;
+padding:45px;
+transition:transform 10s cubic-bezier(.1,.85,.1,1);
+}
+
+.card{
+min-width:340px;
+height:170px;
+border-radius:20px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:rgba(255,255,255,.05);
+border:1px solid rgba(255,255,255,.1);
+font-size:20px;
+text-align:center;
+}
+
+button{
+position:absolute;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+padding:14px 40px;
+border:none;
+border-radius:12px;
+background:#7c3aed;
+color:#fff;
+font-size:18px;
+cursor:pointer;
+}
+
+.result{
+position:absolute;
+left:50%;
+bottom:40px;
+transform:translateX(-50%);
+font-size:30px;
+text-align:center;
+opacity:0;
+transition:.3s;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<button onclick="spin()">SPIN</button>
+
+<div class="main">
+<div class="pointer"></div>
+<div class="roulette"id="r"></div>
+</div>
+
+<div class="result"id="res"></div>
+
+<audio id="sound"src="1.mp3"></audio>
+
+<script>
+
+let db=[];
+let spinning=false;
+
+const r=document.getElementById("r");
+const res=document.getElementById("res");
+const sound=document.getElementById("sound");
+
+/* LOAD DB */
+fetch("games-db.json")
+.then(res=>res.json())
+.then(data=>{
+db=data.games;
+render();
+});
+
+/* RENDER */
+function render(){
+r.innerHTML="";
+
+let pool=[];
+for(let i=0;i<20;i++) pool.push(...db);
+
+pool.forEach(g=>{
+let d=document.createElement("div");
+d.className="card";
+d.innerText=g.name+" ("+g.rarity+")";
+r.appendChild(d);
+});
+}
+
+/* WEIGHT */
+function pick(){
+
+let pool=[];
+
+db.forEach(g=>{
+let w=1;
+
+if(g.rarity==="обычная") w=6;
+if(g.rarity==="хорошая") w=4;
+if(g.rarity==="отличная") w=2;
+if(g.rarity==="легендарная") w=0.7;
+
+for(let i=0;i<w*10;i++){
+pool.push(g);
+}
+});
+
+return pool[Math.floor(Math.random()*pool.length)];
+}
+
+/* SPIN */
+function spin(){
+
+if(spinning)return;
+spinning=true;
+
+res.style.opacity=0;
+
+sound.currentTime=0;
+sound.play();
+
+r.style.transition="none";
+r.style.transform="translateX(0px)";
+
+setTimeout(()=>{
+
+r.style.transition="transform 10s cubic-bezier(.1,.85,.1,1)";
+
+let cards=document.querySelectorAll(".card");
+
+let chosen=pick();
+
+let index=[...cards].findIndex(c=>c.innerText.includes(chosen.name));
+
+let size=358;
+
+let offset=(index*size)-(window.innerWidth/2)+(size/2);
+
+r.style.transform=`translateX(-${offset}px)`;
+
+setTimeout(()=>{
+
+res.innerHTML="🎮 "+chosen.name+"<br>"+chosen.rarity;
+res.style.opacity=1;
+
+sound.pause();
+sound.currentTime=0;
+
+spinning=false;
+
+},10000);
+
+},50);
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,34 @@
+{
+  "games": [
+    {"name":"Hello Neighbor","rarity":"обычная"},
+    {"name":"Goat Simulator","rarity":"обычная"},
+    {"name":"TABS","rarity":"обычная"},
+    {"name":"Human Fall Flat","rarity":"обычная"},
+    {"name":"Raft (ранние главы)","rarity":"обычная"},
+    {"name":"Bendy and the Ink Machine","rarity":"обычная"},
+
+    {"name":"Subnautica: Below Zero","rarity":"хорошая"},
+    {"name":"The Forest","rarity":"хорошая"},
+    {"name":"Green Hell","rarity":"хорошая"},
+    {"name":"Phasmophobia","rarity":"хорошая"},
+    {"name":"Dead by Daylight","rarity":"хорошая"},
+    {"name":"Stray","rarity":"хорошая"},
+
+    {"name":"Minecraft (моды/хардкор/челленджи)","rarity":"отличная"},
+    {"name":"Subnautica","rarity":"отличная"},
+    {"name":"Resident Evil 7 / 8","rarity":"отличная"},
+    {"name":"Hollow Knight","rarity":"отличная"},
+    {"name":"Terraria (моды)","rarity":"отличная"},
+    {"name":"The Long Drive","rarity":"отличная"},
+
+    {"name":"Red Dead Redemption 2","rarity":"легендарная"},
+    {"name":"The Last of Us 1","rarity":"легендарная"},
+    {"name":"God of War (2018 / Ragnarok)","rarity":"легендарная"},
+    {"name":"Elden Ring","rarity":"легендарная"},
+    {"name":"Dark Souls 1–3","rarity":"легендарная"},
+    {"name":"Cyberpunk 2077 (после патчей)","rarity":"легендарная"},
+    {"name":"GTA V (сюжет / RP)","rarity":"легендарная"},
+    {"name":"Metro Exodus","rarity":"легендарная"
+    }
+  ]
+}
