@@ -2,195 +2,37 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"content="width=device-width,initial-scale=1.0">
-<title>РУЛЕТКА</title>
-
-<link rel="stylesheet"href="style.css">
+<title>🎲 Рулетка игр</title>
+<link rel="stylesheet" href="style.css">
 </head>
+<body>
 
-<body class="space">
+<h1>🎲 Рулетка игр</h1>
 
-<div class="title">РУЛЕТКА</div>
+<button onclick="spin()">КРУТИТЬ</button>
+<h2 id="result">---</h2>
 
-<button class="spin"onclick="spin()">SPIN</button>
-<button class="settings"onclick="toggle()">⚙</button>
+<audio id="music" src="1.mp3" loop></audio>
 
-<div class="panel"id="panel">
+<br><br>
 
-<select onchange="setTheme(this.value)">
-<option value="space">SPACE</option>
-<option value="neon">NEON</option>
-<option value="dark">DARK</option>
-</select>
-
-<input id="name"placeholder="Игра">
+<input id="name" placeholder="Игра">
 
 <select id="rarity">
-<option>обычная</option>
-<option>хорошая</option>
-<option>отличная</option>
-<option>легендарная</option>
+  <option>обычная</option>
+  <option>хорошая</option>
+  <option>отличная</option>
+  <option>легендарная</option>
 </select>
 
-<select id="level">
-<option>1</option><option>2</option><option>3</option><option>4</option>
-<option>5</option><option>6</option><option>7</option><option>8</option>
-<option>9</option><option>10</option>
-</select>
+<button onclick="addGame()">Добавить</button>
 
-<button onclick="add()">Добавить игру</button>
+<ul id="list"></ul>
 
-</div>
+<br>
 
-<div class="main">
-<div class="pointer"></div>
-<div class="roulette"id="r"></div>
-</div>
+<button onclick="toggleMusic()">Музыка</button>
 
-<div class="result"id="res"></div>
-
-<audio id="sound"src="1.mp3"></audio>
-
-<script>
-
-let db=JSON.parse(localStorage.getItem("db"))||[];
-let spinning=false;
-
-const r=document.getElementById("r");
-const res=document.getElementById("res");
-const sound=document.getElementById("sound");
-
-/* LOAD JSON FIRST */
-fetch("games-db.json")
-.then(x=>x.json())
-.then(data=>{
-if(db.length===0) db=data.games;
-render();
-});
-
-/* SAVE */
-function save(){
-localStorage.setItem("db",JSON.stringify(db));
-}
-
-/* THEME SAFE */
-function setTheme(t){
-document.body.className="";
-document.body.classList.add(t);
-}
-
-/* TOGGLE PANEL */
-function toggle(){
-let p=document.getElementById("panel");
-p.style.display=p.style.display==="block"?"none":"block";
-}
-
-/* ADD GAME */
-function add(){
-let n=document.getElementById("name").value;
-let rr=document.getElementById("rarity").value;
-let lv=document.getElementById("level").value;
-
-if(!n)return;
-
-db.push({name:n,rarity:rr,level:lv});
-save();
-render();
-}
-
-/* RENDER */
-function render(){
-
-r.innerHTML="";
-
-let pool=[];
-for(let i=0;i<16;i++) pool.push(...db);
-
-pool.forEach((g,i)=>{
-let el=document.createElement("div");
-el.className="card";
-el.dataset.i=i;
-
-el.innerHTML=`
-<div>${g.name}</div>
-<div class="badge">⭐ ${g.rarity} | LVL ${g.level}</div>
-`;
-
-r.appendChild(el);
-});
-
-}
-
-/* PICK */
-function pick(){
-let pool=[];
-db.forEach(g=>{
-let w=1;
-if(g.rarity==="обычная")w=6;
-if(g.rarity==="хорошая")w=4;
-if(g.rarity==="отличная")w=2;
-if(g.rarity==="легендарная")w=0.6;
-
-for(let i=0;i<w*10;i++)pool.push(g);
-});
-return pool[Math.floor(Math.random()*pool.length)];
-}
-
-/* FIXED SPIN */
-function spin(){
-
-if(spinning || db.length===0)return;
-spinning=true;
-
-res.style.opacity=0;
-
-sound.currentTime=0;
-sound.play();
-
-r.style.transition="none";
-r.style.transform="translateX(0px)";
-
-setTimeout(()=>{
-
-r.style.transition="transform 4.8s cubic-bezier(.05,.9,.1,1)";
-
-let cards=[...document.querySelectorAll(".card")];
-let chosen=pick();
-
-/* REAL MATCH */
-let index=db.findIndex(g=>g.name===chosen.name && g.rarity===chosen.rarity);
-if(index<0)index=0;
-
-let target=cards[index];
-
-/* CENTER FIX */
-const main=document.querySelector(".main");
-const center=main.offsetWidth/2;
-
-const offset=
-target.offsetLeft +
-target.offsetWidth/2 -
-center;
-
-r.style.transform=`translateX(-${offset}px)`;
-
-setTimeout(()=>{
-
-res.innerHTML=`🎮 ${chosen.name}<br>⭐ ${chosen.rarity} | LVL ${chosen.level}`;
-res.style.opacity=1;
-
-sound.pause();
-sound.currentTime=0;
-
-spinning=false;
-
-},4800);
-
-},40);
-
-}
-
-</script>
-
+<script src="app.js"></script>
 </body>
 </html>
