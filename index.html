@@ -11,29 +11,25 @@ body{
 margin:0;
 overflow:hidden;
 font-family:Arial;
-color:#fff;
 background:#05010a;
+color:#fff;
 }
 
-/* BACKGROUND */
 .bg{
 position:absolute;
 inset:0;
-background:radial-gradient(circle at 30% 20%,#1a0033,#000);
+background:radial-gradient(circle,#1a0033,#000);
 }
 
-/* TITLE */
 .title{
 position:absolute;
-top:12px;
+top:10px;
 left:50%;
 transform:translateX(-50%);
-font-size:18px;
 letter-spacing:4px;
 opacity:.8;
 }
 
-/* SPIN */
 .spin{
 position:absolute;
 top:50px;
@@ -41,16 +37,12 @@ left:50%;
 transform:translateX(-50%);
 padding:12px 36px;
 border:none;
-border-radius:12px;
+border-radius:10px;
 background:#7c3aed;
 color:#fff;
 cursor:pointer;
-font-size:16px;
-transition:.2s;
 }
-.spin:hover{transform:translateX(-50%) scale(1.05);}
 
-/* MAIN */
 .main{
 position:absolute;
 left:50%;
@@ -62,29 +54,26 @@ border-radius:18px;
 background:rgba(255,255,255,.03);
 backdrop-filter:blur(14px);
 overflow:hidden;
-border:1px solid rgba(255,255,255,.08);
 }
 
-/* POINTER */
 .pointer{
 position:absolute;
 left:50%;
 top:0;
 transform:translateX(-50%);
-width:3px;
+width:4px;
 height:100%;
 background:#ff00ff;
 box-shadow:0 0 18px #ff00ff;
 z-index:10;
 }
 
-/* ROULETTE */
 .roulette{
 display:flex;
 gap:14px;
 padding:40px;
+transition:transform 4.5s cubic-bezier(.08,.9,.1,1);
 will-change:transform;
-transition:transform 4.2s cubic-bezier(.08,.9,.1,1);
 }
 
 .card{
@@ -95,9 +84,8 @@ display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
-background:rgba(255,255,255,.04);
+background:rgba(255,255,255,.05);
 border:1px solid rgba(255,255,255,.1);
-font-size:16px;
 text-align:center;
 }
 
@@ -108,30 +96,8 @@ left:50%;
 bottom:40px;
 transform:translateX(-50%);
 font-size:26px;
-text-align:center;
 opacity:0;
-transition:.25s;
-}
-
-/* SOCIAL */
-.social{
-position:absolute;
-bottom:15px;
-width:100%;
-display:flex;
-justify-content:space-between;
-padding:0 18px;
-}
-
-.social a{
-text-decoration:none;
-color:#fff;
-padding:10px 14px;
-border-radius:10px;
-background:rgba(0,0,0,.4);
-border:1px solid rgba(255,255,255,.1);
-backdrop-filter:blur(10px);
-font-size:14px;
+transition:.3s;
 }
 
 </style>
@@ -152,68 +118,68 @@ font-size:14px;
 
 <div class="result"id="res"></div>
 
-<div class="social">
-<a href="https://www.twitch.tv/azraellonelive"target="_blank">TWITCH</a>
-<a href="https://www.youtube.com/@AzraelLone"target="_blank">YOUTUBE</a>
-</div>
-
 <audio id="sound"src="1.mp3"></audio>
 
 <script>
 
-let games=[
-{name:"Minecraft",rarity:"отличная"},
-{name:"Elden Ring",rarity:"легендарная"},
-{name:"GTA V",rarity:"отличная"},
-{name:"Hello Neighbor",rarity:"обычная"},
-{name:"Phasmophobia",rarity:"хорошая"},
-{name:"Terraria",rarity:"отличная"},
-{name:"The Forest",rarity:"хорошая"}
-];
+let db=[];
+let spinning=false;
 
 const r=document.getElementById("r");
 const res=document.getElementById("res");
 const sound=document.getElementById("sound");
 
-let spinning=false;
+/* 🔥 ЗАГРУЗКА БАЗЫ */
+fetch("games-db.json")
+.then(res=>res.json())
+.then(data=>{
+db=data.games;
+render();
+})
+.catch(err=>{
+document.body.innerHTML="❌ НЕ НАЙДЕН games-db.json";
+});
 
-/* RENDER */
+/* РЕНДЕР */
 function render(){
 
 r.innerHTML="";
+
 let pool=[];
-for(let i=0;i<16;i++) pool.push(...games);
+for(let i=0;i<14;i++) pool.push(...db);
 
 pool.forEach(g=>{
-let el=document.createElement("div");
-el.className="card";
-el.innerHTML=`${g.name}<br>${g.rarity}`;
-r.appendChild(el);
+let d=document.createElement("div");
+d.className="card";
+d.innerHTML=`${g.name}<br>${g.rarity}`;
+r.appendChild(d);
 });
 
 }
 
-render();
-
-/* WEIGHT PICK */
+/* ВЫБОР */
 function pick(){
-let pool=[];
-games.forEach(g=>{
-let w=1;
-if(g.rarity==="обычная")w=6;
-if(g.rarity==="хорошая")w=4;
-if(g.rarity==="отличная")w=2;
-if(g.rarity==="легендарная")w=0.6;
 
-for(let i=0;i<w*10;i++)pool.push(g);
+let pool=[];
+
+db.forEach(g=>{
+let w=1;
+
+if(g.rarity==="обычная") w=6;
+if(g.rarity==="хорошая") w=4;
+if(g.rarity==="отличная") w=2;
+if(g.rarity==="легендарная") w=0.6;
+
+for(let i=0;i<w*10;i++) pool.push(g);
 });
+
 return pool[Math.floor(Math.random()*pool.length)];
 }
 
-/* SPIN FIXED */
+/* 🎰 SPIN FIX */
 function spin(){
 
-if(spinning)return;
+if(spinning || db.length===0)return;
 spinning=true;
 
 res.style.opacity=0;
@@ -227,23 +193,20 @@ r.style.transform="translateX(0px)";
 
 setTimeout(()=>{
 
-r.style.transition="transform 4.2s cubic-bezier(.08,.9,.1,1)";
+r.style.transition="transform 4.5s cubic-bezier(.08,.9,.1,1)";
 
 let cards=[...document.querySelectorAll(".card")];
-
 let chosen=pick();
 
 let el=cards.find(c=>c.innerText.includes(chosen.name));
 if(!el) el=cards[0];
 
-/* EXACT CENTER FIX */
-let offset=
-el.getBoundingClientRect().left +
-el.offsetWidth/2 -
-window.innerWidth/2;
+/* 🔥 ТОЧНЫЙ ЦЕНТР */
+const main=document.querySelector(".main");
+const mainCenter=main.getBoundingClientRect().width/2;
 
-/* slight variation for realism */
-offset += (Math.random()*60-30);
+const offset=
+el.offsetLeft + el.offsetWidth/2 - mainCenter;
 
 r.style.transform=`translateX(-${offset}px)`;
 
@@ -257,7 +220,7 @@ sound.currentTime=0;
 
 spinning=false;
 
-},4200);
+},4500);
 
 },40);
 
