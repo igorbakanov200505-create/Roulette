@@ -2,37 +2,182 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<title>🎲 Рулетка игр</title>
-<link rel="stylesheet" href="style.css">
+<meta name="viewport"content="width=device-width,initial-scale=1.0">
+<title>РУЛЕТКА</title>
+<link rel="stylesheet"href="style.css">
 </head>
-<body>
 
-<h1>🎲 Рулетка игр</h1>
+<body class="space">
 
-<button onclick="spin()">КРУТИТЬ</button>
-<h2 id="result">---</h2>
+<div class="title">РУЛЕТКА</div>
 
-<audio id="music" src="1.mp3" loop></audio>
+<button class="spin"onclick="spin()">SPIN</button>
+<button class="settings"onclick="toggle()">⚙</button>
 
-<br><br>
+<div class="panel"id="panel">
 
-<input id="name" placeholder="Игра">
-
-<select id="rarity">
-  <option>обычная</option>
-  <option>хорошая</option>
-  <option>отличная</option>
-  <option>легендарная</option>
+<select onchange="setTheme(this.value)">
+<option value="space">SPACE</option>
+<option value="neon">NEON</option>
+<option value="dark">DARK</option>
 </select>
 
-<button onclick="addGame()">Добавить</button>
+<input id="name"placeholder="Игра">
+<select id="rarity">
+<option>обычная</option>
+<option>хорошая</option>
+<option>отличная</option>
+<option>легендарная</option>
+</select>
 
-<ul id="list"></ul>
+<button onclick="add()">Добавить</button>
 
-<br>
+</div>
 
-<button onclick="toggleMusic()">Музыка</button>
+<div class="main">
+<div class="pointer"></div>
+<div class="roulette"id="r"></div>
+</div>
 
-<script src="app.js"></script>
+<div class="result"id="res"></div>
+
+<audio id="sound"src="1.mp3"></audio>
+
+<script>
+
+let db=JSON.parse(localStorage.getItem("db"))||[];
+let spinning=false;
+
+const r=document.getElementById("r");
+const res=document.getElementById("res");
+const sound=document.getElementById("sound");
+
+/* LOAD BASE */
+fetch("games-db.json")
+.then(x=>x.json())
+.then(data=>{
+if(db.length===0)db=data.games;
+render();
+});
+
+/* SAVE */
+function save(){
+localStorage.setItem("db",JSON.stringify(db));
+}
+
+/* THEME SAFE */
+function setTheme(t){
+document.body.className=t;
+}
+
+/* PANEL */
+function toggle(){
+let p=document.getElementById("panel");
+p.style.display=p.style.display==="block"?"none":"block";
+}
+
+/* ADD */
+function add(){
+let n=document.getElementById("name").value;
+let rr=document.getElementById("rarity").value;
+
+if(!n)return;
+
+db.push({name:n,rarity:rr});
+save();
+render();
+}
+
+/* RENDER (INDEX FIX) */
+function render(){
+r.innerHTML="";
+
+db.forEach((g,i)=>{
+let el=document.createElement("div");
+el.className="card";
+el.dataset.index=i;
+
+el.innerHTML=`
+<div>${g.name}</div>
+<div class="badge">${g.rarity}</div>
+`;
+
+r.appendChild(el);
+});
+}
+
+/* PICK (WEIGHTED) */
+function pick(){
+let pool=[];
+db.forEach(g=>{
+let w=1;
+if(g.rarity==="обычная")w=6;
+if(g.rarity==="хорошая")w=4;
+if(g.rarity==="отличная")w=2;
+if(g.rarity==="легендарная")w=0.5;
+
+for(let i=0;i<w*10;i++)pool.push(g);
+});
+return pool[Math.floor(Math.random()*pool.length)];
+}
+
+/* FINAL SPIN FIX */
+function spin(){
+
+if(spinning || db.length===0)return;
+spinning=true;
+
+res.style.opacity=0;
+
+sound.currentTime=0;
+sound.play();
+
+/* reset */
+r.style.transition="none";
+r.style.transform="translateX(0px)";
+
+setTimeout(()=>{
+
+r.style.transition="transform 4.5s cubic-bezier(.05,.9,.1,1)";
+
+const cards=[...document.querySelectorAll(".card")];
+
+const chosen=pick();
+
+/* find real index */
+const index=db.findIndex(g=>g.name===chosen.name);
+
+const target=cards[index];
+
+/* center fix */
+const main=document.querySelector(".main");
+const center=main.offsetWidth/2;
+
+const offset=
+target.offsetLeft +
+target.offsetWidth/2 -
+center;
+
+/* move */
+r.style.transform=`translateX(-${offset}px)`;
+
+setTimeout(()=>{
+
+res.innerHTML=`🎮 ${chosen.name}<br>${chosen.rarity}`;
+res.style.opacity=1;
+
+sound.pause();
+sound.currentTime=0;
+
+spinning=false;
+
+},4500);
+
+},50);
+
+}
+
+</script>
+
 </body>
 </html>
