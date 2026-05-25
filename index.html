@@ -22,7 +22,12 @@
 <option value="dark">DARK</option>
 </select>
 
+<!-- ⚡ СКОРОСТЬ -->
+<label>Скорость</label>
+<input id="speed"type="range"min="2"max="8"step="0.5"value="4.5">
+
 <input id="name"placeholder="Игра">
+
 <select id="rarity">
 <option>обычная</option>
 <option>хорошая</option>
@@ -52,35 +57,34 @@ const r=document.getElementById("r");
 const res=document.getElementById("res");
 const sound=document.getElementById("sound");
 
-/* LOAD BASE */
+/* load */
 fetch("games-db.json")
 .then(x=>x.json())
-.then(data=>{
-if(db.length===0)db=data.games;
+.then(d=>{
+if(db.length===0)db=d.games;
 render();
 });
 
-/* SAVE */
+/* save */
 function save(){
 localStorage.setItem("db",JSON.stringify(db));
 }
 
-/* THEME SAFE */
+/* theme FIX */
 function setTheme(t){
 document.body.className=t;
 }
 
-/* PANEL */
+/* panel */
 function toggle(){
 let p=document.getElementById("panel");
 p.style.display=p.style.display==="block"?"none":"block";
 }
 
-/* ADD */
+/* add */
 function add(){
 let n=document.getElementById("name").value;
 let rr=document.getElementById("rarity").value;
-
 if(!n)return;
 
 db.push({name:n,rarity:rr});
@@ -88,25 +92,19 @@ save();
 render();
 }
 
-/* RENDER (INDEX FIX) */
+/* render */
 function render(){
 r.innerHTML="";
-
 db.forEach((g,i)=>{
 let el=document.createElement("div");
 el.className="card";
 el.dataset.index=i;
-
-el.innerHTML=`
-<div>${g.name}</div>
-<div class="badge">${g.rarity}</div>
-`;
-
+el.innerHTML=`<div>${g.name}</div><div class="badge">${g.rarity}</div>`;
 r.appendChild(el);
 });
 }
 
-/* PICK (WEIGHTED) */
+/* pick */
 function pick(){
 let pool=[];
 db.forEach(g=>{
@@ -115,13 +113,12 @@ if(g.rarity==="обычная")w=6;
 if(g.rarity==="хорошая")w=4;
 if(g.rarity==="отличная")w=2;
 if(g.rarity==="легендарная")w=0.5;
-
 for(let i=0;i<w*10;i++)pool.push(g);
 });
 return pool[Math.floor(Math.random()*pool.length)];
 }
 
-/* FINAL SPIN FIX */
+/* 🎰 SPIN FIX + SPEED */
 function spin(){
 
 if(spinning || db.length===0)return;
@@ -132,24 +129,23 @@ res.style.opacity=0;
 sound.currentTime=0;
 sound.play();
 
-/* reset */
+/* SPEED FROM UI */
+let speed=document.getElementById("speed").value;
+document.documentElement.style.setProperty("--speed",speed+"s");
+
 r.style.transition="none";
 r.style.transform="translateX(0px)";
 
 setTimeout(()=>{
 
-r.style.transition="transform 4.5s cubic-bezier(.05,.9,.1,1)";
+r.style.transition=`transform ${speed}s cubic-bezier(.05,.9,.1,1)`;
 
 const cards=[...document.querySelectorAll(".card")];
 
 const chosen=pick();
-
-/* find real index */
 const index=db.findIndex(g=>g.name===chosen.name);
-
 const target=cards[index];
 
-/* center fix */
 const main=document.querySelector(".main");
 const center=main.offsetWidth/2;
 
@@ -158,7 +154,6 @@ target.offsetLeft +
 target.offsetWidth/2 -
 center;
 
-/* move */
 r.style.transform=`translateX(-${offset}px)`;
 
 setTimeout(()=>{
@@ -171,9 +166,9 @@ sound.currentTime=0;
 
 spinning=false;
 
-},4500);
+},speed*1000);
 
-},50);
+},40);
 
 }
 
