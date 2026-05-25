@@ -5,111 +5,37 @@
 <meta name="viewport"content="width=device-width,initial-scale=1.0">
 <title>РУЛЕТКА</title>
 
-<style>
-
-body{
-margin:0;
-overflow:hidden;
-font-family:Arial;
-background:#05010a;
-color:#fff;
-}
-
-.bg{
-position:absolute;
-inset:0;
-background:radial-gradient(circle,#1a0033,#000);
-}
-
-.title{
-position:absolute;
-top:10px;
-left:50%;
-transform:translateX(-50%);
-letter-spacing:4px;
-opacity:.8;
-}
-
-.spin{
-position:absolute;
-top:50px;
-left:50%;
-transform:translateX(-50%);
-padding:12px 36px;
-border:none;
-border-radius:10px;
-background:#7c3aed;
-color:#fff;
-cursor:pointer;
-}
-
-.main{
-position:absolute;
-left:50%;
-top:55%;
-transform:translate(-50%,-50%);
-width:1500px;
-height:240px;
-border-radius:18px;
-background:rgba(255,255,255,.03);
-backdrop-filter:blur(14px);
-overflow:hidden;
-}
-
-.pointer{
-position:absolute;
-left:50%;
-top:0;
-transform:translateX(-50%);
-width:4px;
-height:100%;
-background:#ff00ff;
-box-shadow:0 0 18px #ff00ff;
-z-index:10;
-}
-
-.roulette{
-display:flex;
-gap:14px;
-padding:40px;
-transition:transform 4.5s cubic-bezier(.08,.9,.1,1);
-will-change:transform;
-}
-
-.card{
-min-width:320px;
-height:150px;
-border-radius:14px;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-background:rgba(255,255,255,.05);
-border:1px solid rgba(255,255,255,.1);
-text-align:center;
-}
-
-/* RESULT */
-.result{
-position:absolute;
-left:50%;
-bottom:40px;
-transform:translateX(-50%);
-font-size:26px;
-opacity:0;
-transition:.3s;
-}
-
-</style>
+<link rel="stylesheet"href="style.css">
 </head>
 
-<body>
-
-<div class="bg"></div>
+<body class="space">
 
 <div class="title">РУЛЕТКА</div>
 
 <button class="spin"onclick="spin()">SPIN</button>
+<button class="settings"onclick="toggle()">⚙</button>
+
+<div class="panel"id="panel">
+
+<select id="theme"onchange="setTheme(this.value)">
+<option value="space">SPACE</option>
+<option value="neon">NEON</option>
+<option value="dark">DARK</option>
+</select>
+
+<input id="speed"type="range"min="3"max="8"step="0.5"value="5">
+
+<input id="gameName"placeholder="Игра">
+<select id="rarity">
+<option>обычная</option>
+<option>хорошая</option>
+<option>отличная</option>
+<option>легендарная</option>
+</select>
+
+<button onclick="add()">Добавить игру</button>
+
+</div>
 
 <div class="main">
 <div class="pointer"></div>
@@ -129,57 +55,70 @@ const r=document.getElementById("r");
 const res=document.getElementById("res");
 const sound=document.getElementById("sound");
 
-/* 🔥 ЗАГРУЗКА БАЗЫ */
+/* LOAD DB */
 fetch("games-db.json")
-.then(res=>res.json())
-.then(data=>{
-db=data.games;
+.then(r=>r.json())
+.then(d=>{
+db=d.games;
 render();
-})
-.catch(err=>{
-document.body.innerHTML="❌ НЕ НАЙДЕН games-db.json";
 });
 
-/* РЕНДЕР */
+/* RENDER */
 function render(){
 
 r.innerHTML="";
 
 let pool=[];
-for(let i=0;i<14;i++) pool.push(...db);
+for(let i=0;i<18;i++) pool.push(...db);
 
 pool.forEach(g=>{
-let d=document.createElement("div");
-d.className="card";
-d.innerHTML=`${g.name}<br>${g.rarity}`;
-r.appendChild(d);
+let el=document.createElement("div");
+el.className="card";
+el.innerHTML=`${g.name}<br>${g.rarity}`;
+r.appendChild(el);
 });
 
 }
 
-/* ВЫБОР */
+/* ADD GAME */
+function add(){
+let n=document.getElementById("gameName").value;
+let rr=document.getElementById("rarity").value;
+
+db.push({name:n,rarity:rr});
+render();
+}
+
+/* THEME */
+function setTheme(t){
+document.body.className=t;
+}
+
+/* PANEL */
+function toggle(){
+let p=document.getElementById("panel");
+p.style.display=p.style.display==="block"?"none":"block";
+}
+
+/* PICK */
 function pick(){
-
 let pool=[];
-
 db.forEach(g=>{
 let w=1;
+if(g.rarity==="обычная")w=6;
+if(g.rarity==="хорошая")w=4;
+if(g.rarity==="отличная")w=2;
+if(g.rarity==="легендарная")w=0.6;
 
-if(g.rarity==="обычная") w=6;
-if(g.rarity==="хорошая") w=4;
-if(g.rarity==="отличная") w=2;
-if(g.rarity==="легендарная") w=0.6;
-
-for(let i=0;i<w*10;i++) pool.push(g);
+for(let i=0;i<w*10;i++)pool.push(g);
 });
-
 return pool[Math.floor(Math.random()*pool.length)];
 }
 
-/* 🎰 SPIN FIX */
+/* SPIN FAST + LONG MOVE */
 function spin(){
 
-if(spinning || db.length===0)return;
+if(spinning)return;
 spinning=true;
 
 res.style.opacity=0;
@@ -187,13 +126,17 @@ res.style.opacity=0;
 sound.currentTime=0;
 sound.play();
 
+/* speed from UI */
+let speed=document.getElementById("speed").value;
+document.documentElement.style.setProperty("--speed",speed+"s");
+
 /* reset */
 r.style.transition="none";
 r.style.transform="translateX(0px)";
 
 setTimeout(()=>{
 
-r.style.transition="transform 4.5s cubic-bezier(.08,.9,.1,1)";
+r.style.transition=`transform ${speed}s cubic-bezier(.05,.9,.1,1)`;
 
 let cards=[...document.querySelectorAll(".card")];
 let chosen=pick();
@@ -201,12 +144,15 @@ let chosen=pick();
 let el=cards.find(c=>c.innerText.includes(chosen.name));
 if(!el) el=cards[0];
 
-/* 🔥 ТОЧНЫЙ ЦЕНТР */
-const main=document.querySelector(".main");
-const mainCenter=main.getBoundingClientRect().width/2;
+/* LONG SPIN BOOST (важно!) */
+let baseOffset=
+el.offsetLeft + el.offsetWidth/2
+- window.innerWidth/2;
 
-const offset=
-el.offsetLeft + el.offsetWidth/2 - mainCenter;
+/* добавляем “докрутку” чтобы реально крутилось */
+let extraSpin = 3000 + Math.random()*2000;
+
+let offset = baseOffset + extraSpin;
 
 r.style.transform=`translateX(-${offset}px)`;
 
@@ -220,9 +166,9 @@ sound.currentTime=0;
 
 spinning=false;
 
-},4500);
+},speed*1000);
 
-},40);
+},50);
 
 }
 
