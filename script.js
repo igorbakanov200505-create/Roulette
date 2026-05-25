@@ -1,11 +1,16 @@
 let db = [];
 let spinning = false;
 
+let settings = {
+  speed: 5,
+  time: 5,
+  theme: "space"
+};
+
 const r = document.getElementById("r");
 const res = document.getElementById("res");
 const sound = document.getElementById("sound");
 
-/* 📦 загрузка базы */
 fetch("games-db.json")
 .then(r => r.json())
 .then(data => {
@@ -13,88 +18,77 @@ fetch("games-db.json")
   render();
 });
 
-/* 🎴 рендер ленты */
+/* 🎴 */
 function render(){
   r.innerHTML = "";
-
   let loop = [];
-  for(let i=0;i<25;i++){
-    loop.push(...db);
-  }
+  for(let i=0;i<20;i++) loop.push(...db);
 
-  loop.forEach(g => {
-    const el = document.createElement("div");
-    el.className = "card";
-    el.dataset.name = g.name;
-
-    el.innerHTML = `
-      <div>${g.name}</div>
-      <div class="badge">${g.rarity}</div>
-    `;
-
+  loop.forEach(g=>{
+    let el=document.createElement("div");
+    el.className="card";
+    el.dataset.name=g.name;
+    el.innerHTML=`${g.name}<div>${g.rarity}</div>`;
     r.appendChild(el);
   });
 }
 
-/* 🎨 темы (фикс без багов) */
-function setTheme(name){
+/* 🎨 */
+function setTheme(t){
   document.body.classList.remove("space","neon","dark");
-  document.body.classList.add(name);
+  document.body.classList.add(t);
 }
 
-/* 🎲 случай */
-function pickGame(){
-  return db[Math.floor(Math.random()*db.length)];
-}
-
-/* 🎰 SPIN */
+/* 🎰 */
 function spin(){
   if(spinning) return;
-  spinning = true;
+  spinning=true;
 
-  res.style.opacity = 0;
-
-  sound.currentTime = 0;
+  res.style.opacity=0;
+  sound.currentTime=0;
   sound.play();
 
-  r.style.transition = "none";
-  r.style.transform = "translateX(0px)";
+  r.style.transition="none";
+  r.style.transform="translateX(0px)";
 
-  setTimeout(() => {
+  setTimeout(()=>{
 
-    const cards = [...document.querySelectorAll(".card")];
-    const targetGame = pickGame();
+    const cards=[...document.querySelectorAll(".card")];
+    const target=db[Math.floor(Math.random()*db.length)];
+    const el=cards.find(c=>c.dataset.name===target.name);
 
-    const same = cards.filter(c => c.dataset.name === targetGame.name);
-    const target = same[Math.floor(Math.random()*same.length)];
+    const center=document.querySelector(".main").offsetWidth/2;
+    const rect=el.getBoundingClientRect();
+    const wrap=r.getBoundingClientRect();
 
-    const main = document.querySelector(".main");
-    const center = main.getBoundingClientRect().width / 2;
+    const offset=(rect.left-wrap.left)+rect.width/2-center;
 
-    const rect = target.getBoundingClientRect();
-    const rRect = r.getBoundingClientRect();
+    r.style.transition=`transform ${settings.time}s cubic-bezier(.1,.8,.1,1)`;
+    r.style.transform=`translateX(-${offset+2000}px)`;
 
-    const offset =
-      (rect.left - rRect.left) +
-      rect.width/2 -
-      center;
+    setTimeout(()=>{
+      res.innerHTML=`🎮 ${target.name}<br>${target.rarity}`;
+      res.style.opacity=1;
+      spinning=false;
+    },settings.time*1000);
 
-    const extraSpin = 3000 + Math.random()*1500;
+  },50);
+}
 
-    r.style.transition = "transform 5s cubic-bezier(0.12,0.85,0.1,1)";
-    r.style.transform = `translateX(-${offset + extraSpin}px)`;
+/* ⚙️ MODAL */
+function openSettings(){
+  document.getElementById("modal").style.display="flex";
+}
 
-    setTimeout(() => {
+function closeSettings(){
+  document.getElementById("modal").style.display="none";
+}
 
-      res.innerHTML = `🎮 ${targetGame.name}<br>${targetGame.rarity}`;
-      res.style.opacity = 1;
+function applySettings(){
+  settings.time=parseFloat(document.getElementById("time").value);
+  settings.speed=parseFloat(document.getElementById("speed").value);
+  settings.theme=document.getElementById("themeSelect").value;
 
-      sound.pause();
-      sound.currentTime = 0;
-
-      spinning = false;
-
-    }, 5000);
-
-  }, 80);
+  setTheme(settings.theme);
+  closeSettings();
 }
