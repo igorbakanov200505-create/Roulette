@@ -11,16 +11,23 @@
 
 <div class="title">РУЛЕТКА</div>
 
-<button class="spin"onclick="spin()">SPIN</button>
-
-<div class="main">
-<div class="pointer"></div>
-<div class="roulette"id="r"></div>
+<!-- 🎛 темы -->
+<div class="themes">
+  <button onclick="setTheme('space')">Space</button>
+  <button onclick="setTheme('neon')">Neon</button>
+  <button onclick="setTheme('dark')">Dark</button>
 </div>
 
-<div class="result"id="res"></div>
+<button class="spin" onclick="spin()">SPIN</button>
 
-<audio id="sound"src="1.mp3"></audio>
+<div class="main">
+  <div class="pointer"></div>
+  <div class="roulette" id="r"></div>
+</div>
+
+<div class="result" id="res"></div>
+
+<audio id="sound" src="1.mp3"></audio>
 
 <script>
 
