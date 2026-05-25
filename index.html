@@ -12,23 +12,25 @@ margin:0;
 overflow:hidden;
 font-family:Arial;
 color:#fff;
-transition:0.6s;
+background:#05010a;
 }
 
-/* THEMES */
-body.space{background:radial-gradient(circle,#12002a,#000);}
-body.neon{background:linear-gradient(120deg,#0f0f2d,#1a0033,#000);}
-body.dark{background:#050505;}
+/* BACKGROUND */
+.bg{
+position:absolute;
+inset:0;
+background:radial-gradient(circle at 30% 20%,#1a0033,#000);
+}
 
-/* TOP TITLE */
+/* TITLE */
 .title{
 position:absolute;
-top:10px;
+top:12px;
 left:50%;
 transform:translateX(-50%);
-font-size:22px;
-font-weight:800;
-letter-spacing:3px;
+font-size:18px;
+letter-spacing:4px;
+opacity:.8;
 }
 
 /* SPIN */
@@ -37,61 +39,16 @@ position:absolute;
 top:50px;
 left:50%;
 transform:translateX(-50%);
-padding:14px 40px;
+padding:12px 36px;
 border:none;
 border-radius:12px;
 background:#7c3aed;
 color:#fff;
 cursor:pointer;
-font-size:18px;
+font-size:16px;
+transition:.2s;
 }
-
-/* SETTINGS */
-.settingsBtn{
-position:absolute;
-top:15px;
-right:15px;
-width:45px;
-height:45px;
-border-radius:10px;
-border:none;
-background:#7c3aed;
-color:#fff;
-cursor:pointer;
-}
-
-.panel{
-position:absolute;
-right:15px;
-top:70px;
-width:280px;
-background:rgba(0,0,0,.6);
-backdrop-filter:blur(12px);
-border-radius:14px;
-padding:12px;
-display:none;
-}
-
-.panel input,.panel select{
-width:100%;
-padding:8px;
-margin-top:8px;
-border:none;
-border-radius:8px;
-background:#111;
-color:#fff;
-}
-
-.panel button{
-width:100%;
-margin-top:10px;
-padding:8px;
-border:none;
-border-radius:8px;
-background:#7c3aed;
-color:#fff;
-cursor:pointer;
-}
+.spin:hover{transform:translateX(-50%) scale(1.05);}
 
 /* MAIN */
 .main{
@@ -99,42 +56,49 @@ position:absolute;
 left:50%;
 top:55%;
 transform:translate(-50%,-50%);
-width:1600px;
-height:260px;
-border-radius:22px;
+width:1500px;
+height:240px;
+border-radius:18px;
 background:rgba(255,255,255,.03);
 backdrop-filter:blur(14px);
 overflow:hidden;
+border:1px solid rgba(255,255,255,.08);
 }
 
+/* POINTER */
 .pointer{
 position:absolute;
 left:50%;
 top:0;
 transform:translateX(-50%);
-width:4px;
+width:3px;
 height:100%;
 background:#ff00ff;
-box-shadow:0 0 20px #ff00ff;
+box-shadow:0 0 18px #ff00ff;
+z-index:10;
 }
 
+/* ROULETTE */
 .roulette{
 display:flex;
-gap:18px;
-padding:45px;
-transition:transform 10s cubic-bezier(.1,.85,.1,1);
+gap:14px;
+padding:40px;
+will-change:transform;
+transition:transform 4.2s cubic-bezier(.08,.9,.1,1);
 }
 
 .card{
-min-width:340px;
-height:170px;
-border-radius:18px;
+min-width:320px;
+height:150px;
+border-radius:14px;
 display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
-background:rgba(255,255,255,.05);
+background:rgba(255,255,255,.04);
 border:1px solid rgba(255,255,255,.1);
+font-size:16px;
+text-align:center;
 }
 
 /* RESULT */
@@ -143,20 +107,20 @@ position:absolute;
 left:50%;
 bottom:40px;
 transform:translateX(-50%);
-font-size:30px;
-opacity:0;
-transition:.3s;
+font-size:26px;
 text-align:center;
+opacity:0;
+transition:.25s;
 }
 
-/* SOCIAL ICONS */
+/* SOCIAL */
 .social{
 position:absolute;
 bottom:15px;
 width:100%;
 display:flex;
 justify-content:space-between;
-padding:0 20px;
+padding:0 18px;
 }
 
 .social a{
@@ -165,47 +129,21 @@ color:#fff;
 padding:10px 14px;
 border-radius:10px;
 background:rgba(0,0,0,.4);
+border:1px solid rgba(255,255,255,.1);
 backdrop-filter:blur(10px);
-display:flex;
-align-items:center;
-gap:8px;
-}
-
-/* ICON STYLE */
-.icon{
-width:18px;
-height:18px;
+font-size:14px;
 }
 
 </style>
 </head>
 
-<body class="space">
+<body>
+
+<div class="bg"></div>
 
 <div class="title">РУЛЕТКА</div>
 
 <button class="spin"onclick="spin()">SPIN</button>
-<button class="settingsBtn"onclick="toggle()">⚙</button>
-
-<div class="panel"id="panel">
-
-<input id="name"placeholder="Игра">
-<select id="rarity">
-<option>обычная</option>
-<option>хорошая</option>
-<option>отличная</option>
-<option>легендарная</option>
-</select>
-
-<button onclick="add()">Добавить игру</button>
-
-<hr>
-
-<button onclick="theme('space')">SPACE</button>
-<button onclick="theme('neon')">NEON</button>
-<button onclick="theme('dark')">DARK</button>
-
-</div>
 
 <div class="main">
 <div class="pointer"></div>
@@ -214,75 +152,50 @@ height:18px;
 
 <div class="result"id="res"></div>
 
-<!-- SOCIAL -->
 <div class="social">
-
-<a href="https://www.twitch.tv/azraellonelive"target="_blank">
-<img class="icon"src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png">
-Twitch
-</a>
-
-<a href="https://www.youtube.com/@AzraelLone"target="_blank">
-<img class="icon"src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
-YouTube
-</a>
-
+<a href="https://www.twitch.tv/azraellonelive"target="_blank">TWITCH</a>
+<a href="https://www.youtube.com/@AzraelLone"target="_blank">YOUTUBE</a>
 </div>
 
 <audio id="sound"src="1.mp3"></audio>
 
 <script>
 
-let games=JSON.parse(localStorage.getItem("games"))||[
+let games=[
 {name:"Minecraft",rarity:"отличная"},
 {name:"Elden Ring",rarity:"легендарная"},
-{name:"GTA V",rarity:"отличная"}
+{name:"GTA V",rarity:"отличная"},
+{name:"Hello Neighbor",rarity:"обычная"},
+{name:"Phasmophobia",rarity:"хорошая"},
+{name:"Terraria",rarity:"отличная"},
+{name:"The Forest",rarity:"хорошая"}
 ];
 
 const r=document.getElementById("r");
 const res=document.getElementById("res");
-const panel=document.getElementById("panel");
 const sound=document.getElementById("sound");
 
 let spinning=false;
 
 /* RENDER */
 function render(){
+
 r.innerHTML="";
 let pool=[];
-for(let i=0;i<18;i++) pool.push(...games);
+for(let i=0;i<16;i++) pool.push(...games);
 
 pool.forEach(g=>{
-let d=document.createElement("div");
-d.className="card";
-d.innerHTML=`${g.name}<br>${g.rarity}`;
-r.appendChild(d);
+let el=document.createElement("div");
+el.className="card";
+el.innerHTML=`${g.name}<br>${g.rarity}`;
+r.appendChild(el);
 });
+
 }
+
 render();
 
-/* ADD */
-function add(){
-let n=document.getElementById("name").value;
-let rr=document.getElementById("rarity").value;
-if(!n)return;
-
-games.push({name:n,rarity:rr});
-localStorage.setItem("games",JSON.stringify(games));
-render();
-}
-
-/* PANEL */
-function toggle(){
-panel.style.display=panel.style.display==="block"?"none":"block";
-}
-
-/* THEME */
-function theme(t){
-document.body.className=t;
-}
-
-/* PICK */
+/* WEIGHT PICK */
 function pick(){
 let pool=[];
 games.forEach(g=>{
@@ -290,14 +203,14 @@ let w=1;
 if(g.rarity==="обычная")w=6;
 if(g.rarity==="хорошая")w=4;
 if(g.rarity==="отличная")w=2;
-if(g.rarity==="легендарная")w=0.7;
+if(g.rarity==="легендарная")w=0.6;
 
 for(let i=0;i<w*10;i++)pool.push(g);
 });
 return pool[Math.floor(Math.random()*pool.length)];
 }
 
-/* SPIN */
+/* SPIN FIXED */
 function spin(){
 
 if(spinning)return;
@@ -308,22 +221,29 @@ res.style.opacity=0;
 sound.currentTime=0;
 sound.play();
 
+/* reset */
 r.style.transition="none";
 r.style.transform="translateX(0px)";
 
 setTimeout(()=>{
 
-r.style.transition="transform 10s cubic-bezier(.1,.85,.1,1)";
+r.style.transition="transform 4.2s cubic-bezier(.08,.9,.1,1)";
 
 let cards=[...document.querySelectorAll(".card")];
 
 let chosen=pick();
 
 let el=cards.find(c=>c.innerText.includes(chosen.name));
+if(!el) el=cards[0];
 
+/* EXACT CENTER FIX */
 let offset=
-(el.offsetLeft + el.offsetWidth/2)
-- window.innerWidth/2;
+el.getBoundingClientRect().left +
+el.offsetWidth/2 -
+window.innerWidth/2;
+
+/* slight variation for realism */
+offset += (Math.random()*60-30);
 
 r.style.transform=`translateX(-${offset}px)`;
 
@@ -337,9 +257,9 @@ sound.currentTime=0;
 
 spinning=false;
 
-},10000);
+},4200);
 
-},50);
+},40);
 
 }
 
