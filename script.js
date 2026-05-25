@@ -1,19 +1,19 @@
-let db = [];
-let spinning = false;
+let db=[];
+let spinning=false;
 
-let settings = {
-  time: 5,
-  theme: "space"
+let settings={
+  time:5,
+  theme:"space"
 };
 
-const r = document.getElementById("r");
-const res = document.getElementById("res");
-const sound = document.getElementById("sound");
+const r=document.getElementById("r");
+const win=document.getElementById("win");
+const sound=document.getElementById("sound");
 
 fetch("games-db.json")
 .then(r=>r.json())
-.then(data=>{
-  db=data.games;
+.then(d=>{
+  db=d.games;
   render();
 });
 
@@ -31,11 +31,13 @@ function render(){
   });
 }
 
+/* 🎰 SPIN */
 function spin(){
-  if(spinning) return;
+  if(spinning)return;
   spinning=true;
 
-  res.style.opacity=0;
+  win.style.opacity=0;
+
   sound.currentTime=0;
   sound.play();
 
@@ -58,27 +60,30 @@ function spin(){
     r.style.transform=`translateX(-${offset+2000}px)`;
 
     setTimeout(()=>{
-      res.innerHTML=`🎮 ${target.name}<br>${target.rarity}`;
-      res.style.opacity=1;
+
+      /* 🎮 FULLSCREEN RESULT */
+      win.innerHTML=target.name;
+      win.style.opacity=1;
+
+      setTimeout(()=>{
+        win.style.opacity=0;
+      },2000);
+
       spinning=false;
+
     },settings.time*1000);
 
   },50);
 }
 
-/* ⚙️ */
-function openSettings(){
-  document.getElementById("modal").style.display="flex";
+/* ⚙️ sidebar */
+function toggleSettings(){
+  document.getElementById("sidebar").classList.toggle("active");
 }
 
-function closeSettings(){
-  document.getElementById("modal").style.display="none";
-}
-
-function applySettings(){
+function apply(){
   settings.time=parseInt(document.getElementById("time").value);
-  settings.theme=document.getElementById("themeSelect").value;
+  settings.theme=document.getElementById("theme").value;
 
   document.body.className=settings.theme;
-  closeSettings();
 }
