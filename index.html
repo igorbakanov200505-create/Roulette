@@ -17,13 +17,14 @@
 
 <div class="panel"id="panel">
 
-<select onchange="theme(this.value)">
+<select onchange="setTheme(this.value)">
 <option value="space">SPACE</option>
 <option value="neon">NEON</option>
 <option value="dark">DARK</option>
 </select>
 
 <input id="name"placeholder="Игра">
+
 <select id="rarity">
 <option>обычная</option>
 <option>хорошая</option>
@@ -32,19 +33,12 @@
 </select>
 
 <select id="level">
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3">3</option>
-<option value="4">4</option>
-<option value="5">5</option>
-<option value="6">6</option>
-<option value="7">7</option>
-<option value="8">8</option>
-<option value="9">9</option>
-<option value="10">10</option>
+<option>1</option><option>2</option><option>3</option><option>4</option>
+<option>5</option><option>6</option><option>7</option><option>8</option>
+<option>9</option><option>10</option>
 </select>
 
-<button onclick="add()">Добавить</button>
+<button onclick="add()">Добавить игру</button>
 
 </div>
 
@@ -59,40 +53,39 @@
 
 <script>
 
-let db=[];
+let db=JSON.parse(localStorage.getItem("db"))||[];
 let spinning=false;
 
 const r=document.getElementById("r");
 const res=document.getElementById("res");
 const sound=document.getElementById("sound");
 
-/* LOAD DB */
+/* LOAD JSON FIRST */
 fetch("games-db.json")
-.then(r=>r.json())
-.then(d=>{
-db=d.games;
+.then(x=>x.json())
+.then(data=>{
+if(db.length===0) db=data.games;
 render();
 });
 
-/* RENDER */
-function render(){
-r.innerHTML="";
-
-let pool=[];
-for(let i=0;i<18;i++) pool.push(...db);
-
-pool.forEach(g=>{
-let el=document.createElement("div");
-el.className="card";
-el.innerHTML=`
-<div>${g.name}</div>
-<div class="badge">⭐ ${g.rarity} | LVL ${g.level}</div>
-`;
-r.appendChild(el);
-});
+/* SAVE */
+function save(){
+localStorage.setItem("db",JSON.stringify(db));
 }
 
-/* ADD */
+/* THEME SAFE */
+function setTheme(t){
+document.body.className="";
+document.body.classList.add(t);
+}
+
+/* TOGGLE PANEL */
+function toggle(){
+let p=document.getElementById("panel");
+p.style.display=p.style.display==="block"?"none":"block";
+}
+
+/* ADD GAME */
 function add(){
 let n=document.getElementById("name").value;
 let rr=document.getElementById("rarity").value;
@@ -101,22 +94,38 @@ let lv=document.getElementById("level").value;
 if(!n)return;
 
 db.push({name:n,rarity:rr,level:lv});
+save();
 render();
 }
 
-/* THEME FIXED */
-function theme(t){
-document.body.className="";
-document.body.classList.add(t);
+/* RENDER */
+function render(){
+
+r.innerHTML="";
+
+let pool=[];
+for(let i=0;i<16;i++) pool.push(...db);
+
+pool.forEach((g,i)=>{
+let el=document.createElement("div");
+el.className="card";
+el.dataset.i=i;
+
+el.innerHTML=`
+<div>${g.name}</div>
+<div class="badge">⭐ ${g.rarity} | LVL ${g.level}</div>
+`;
+
+r.appendChild(el);
+});
+
 }
 
 /* PICK */
 function pick(){
 let pool=[];
-
 db.forEach(g=>{
 let w=1;
-
 if(g.rarity==="обычная")w=6;
 if(g.rarity==="хорошая")w=4;
 if(g.rarity==="отличная")w=2;
@@ -124,14 +133,13 @@ if(g.rarity==="легендарная")w=0.6;
 
 for(let i=0;i<w*10;i++)pool.push(g);
 });
-
 return pool[Math.floor(Math.random()*pool.length)];
 }
 
-/* 🔥 FIXED SPIN */
+/* FIXED SPIN */
 function spin(){
 
-if(spinning)return;
+if(spinning || db.length===0)return;
 spinning=true;
 
 res.style.opacity=0;
@@ -139,7 +147,6 @@ res.style.opacity=0;
 sound.currentTime=0;
 sound.play();
 
-/* reset */
 r.style.transition="none";
 r.style.transform="translateX(0px)";
 
@@ -150,26 +157,26 @@ r.style.transition="transform 4.8s cubic-bezier(.05,.9,.1,1)";
 let cards=[...document.querySelectorAll(".card")];
 let chosen=pick();
 
-let el=cards.find(c=>c.innerText.includes(chosen.name));
-if(!el) el=cards[0];
+/* REAL MATCH */
+let index=db.findIndex(g=>g.name===chosen.name && g.rarity===chosen.rarity);
+if(index<0)index=0;
 
-/* ✔ SAFE CENTER (без window bug) */
+let target=cards[index];
+
+/* CENTER FIX */
 const main=document.querySelector(".main");
 const center=main.offsetWidth/2;
 
 const offset=
-el.offsetLeft + el.offsetWidth/2 - center;
+target.offsetLeft +
+target.offsetWidth/2 -
+center;
 
-/* небольшая живость */
-const jitter=(Math.random()*30-15);
-
-r.style.transform=`translateX(-${offset+jitter}px)`;
+r.style.transform=`translateX(-${offset}px)`;
 
 setTimeout(()=>{
 
-res.innerHTML=
-`🎮 ${chosen.name}<br>⭐ ${chosen.rarity} | LVL ${chosen.level}`;
-
+res.innerHTML=`🎮 ${chosen.name}<br>⭐ ${chosen.rarity} | LVL ${chosen.level}`;
 res.style.opacity=1;
 
 sound.pause();
