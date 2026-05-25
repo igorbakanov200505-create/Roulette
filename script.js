@@ -5,13 +5,15 @@ const r = document.getElementById("r");
 const res = document.getElementById("res");
 const sound = document.getElementById("sound");
 
+/* 📦 загрузка базы */
 fetch("games-db.json")
-.then(x => x.json())
+.then(r => r.json())
 .then(data => {
   db = data.games;
   render();
 });
 
+/* 🎴 рендер ленты */
 function render(){
   r.innerHTML = "";
 
@@ -21,9 +23,8 @@ function render(){
   }
 
   loop.forEach(g => {
-    let el = document.createElement("div");
+    const el = document.createElement("div");
     el.className = "card";
-
     el.dataset.name = g.name;
 
     el.innerHTML = `
@@ -35,14 +36,18 @@ function render(){
   });
 }
 
+/* 🎨 темы (фикс без багов) */
 function setTheme(name){
-  document.body.className = name;
+  document.body.classList.remove("space","neon","dark");
+  document.body.classList.add(name);
 }
 
+/* 🎲 случай */
 function pickGame(){
   return db[Math.floor(Math.random()*db.length)];
 }
 
+/* 🎰 SPIN */
 function spin(){
   if(spinning) return;
   spinning = true;
@@ -58,7 +63,6 @@ function spin(){
   setTimeout(() => {
 
     const cards = [...document.querySelectorAll(".card")];
-
     const targetGame = pickGame();
 
     const same = cards.filter(c => c.dataset.name === targetGame.name);
@@ -72,13 +76,13 @@ function spin(){
 
     const offset =
       (rect.left - rRect.left) +
-      rect.width / 2 -
+      rect.width/2 -
       center;
 
-    const extra = 3000 + Math.random()*1500;
+    const extraSpin = 3000 + Math.random()*1500;
 
-    r.style.transition = "transform 5s cubic-bezier(0.12, 0.85, 0.1, 1)";
-    r.style.transform = `translateX(-${offset + extra}px)`;
+    r.style.transition = "transform 5s cubic-bezier(0.12,0.85,0.1,1)";
+    r.style.transform = `translateX(-${offset + extraSpin}px)`;
 
     setTimeout(() => {
 
