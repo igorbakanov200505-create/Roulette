@@ -2,16 +2,15 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport"content="width=device-width,initial-scale=1.0">
-<title>РУЛЕТКА</title>
-<link rel="stylesheet"href="style.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>РУЛЕТКА ИГР</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body class="space">
 
-<div class="title">РУЛЕТКА</div>
+<div class="title">РУЛЕТКА ИГР</div>
 
-<!-- 🎛 темы -->
 <div class="themes">
   <button onclick="setTheme('space')">Space</button>
   <button onclick="setTheme('neon')">Neon</button>
@@ -29,115 +28,6 @@
 
 <audio id="sound" src="1.mp3"></audio>
 
-<script>
-
-let db=[];
-let spinning=false;
-
-const r=document.getElementById("r");
-const res=document.getElementById("res");
-const sound=document.getElementById("sound");
-
-/* LOAD DB */
-fetch("games-db.json")
-.then(x=>x.json())
-.then(data=>{
-db=data.games;
-render();
-});
-
-/* RENDER — БЕСКОНЕЧНАЯ ЛЕНТА */
-function render(){
-
-r.innerHTML="";
-
-let loop=[];
-
-/* 🔁 делаем длинную дорожку */
-for(let i=0;i<30;i++){
-loop.push(...db);
-}
-
-loop.forEach((g,i)=>{
-
-let el=document.createElement("div");
-el.className="card";
-
-/* индекс оригинальной базы */
-el.dataset.index=db.findIndex(x=>x.name===g.name);
-
-el.innerHTML=`
-<div>${g.name}</div>
-<div class="badge">${g.rarity}</div>
-`;
-
-r.appendChild(el);
-});
-
-}
-
-/* 🎲 РАНДОМ */
-function pickIndex(){
-return Math.floor(Math.random()*db.length);
-}
-
-/* 🎰 SPIN FIXED */
-function spin(){
-
-if(spinning)return;
-spinning=true;
-
-res.style.opacity=0;
-
-sound.currentTime=0;
-sound.play();
-
-/* reset */
-r.style.transition="none";
-r.style.transform="translateX(0px)";
-
-setTimeout(()=>{
-
-const cards=[...document.querySelectorAll(".card")];
-
-const targetGameIndex=pickIndex();
-
-/* ищем все карточки этой игры */
-const possible=cards.filter(c=>Number(c.dataset.index)===targetGameIndex);
-
-/* берём случайную из дублей */
-const target=possible[Math.floor(Math.random()*possible.length)];
-
-const main=document.querySelector(".main");
-const center=main.offsetWidth/2;
-
-const offset=
-target.offsetLeft+
-target.offsetWidth/2-
-center;
-
-r.style.transition="transform 4.5s cubic-bezier(.05,.9,.1,1)";
-r.style.transform=`translateX(-${offset}px)`;
-
-setTimeout(()=>{
-
-const game=db[targetGameIndex];
-
-res.innerHTML=`🎮 ${game.name}<br>${game.rarity}`;
-res.style.opacity=1;
-
-sound.pause();
-sound.currentTime=0;
-
-spinning=false;
-
-},4500);
-
-},50);
-
-}
-
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>
