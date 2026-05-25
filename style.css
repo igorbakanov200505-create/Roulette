@@ -1,26 +1,30 @@
-:root{
---bg1:#0b0b0f;
---bg2:#000;
---text:#fff;
---accent:#7c3aed;
---glow:#ff00ff;
---card:rgba(255,255,255,.05);
-}
-
+/* 🌌 ОСНОВА */
 body{
 margin:0;
 overflow:hidden;
 font-family:Arial;
-color:var(--text);
-background:radial-gradient(circle,var(--bg1),var(--bg2));
+color:#fff;
+background: radial-gradient(circle at top, #1a0033, #000 70%);
 transition:.4s;
 }
 
-/* 🎨 темы */
-body.space{--bg1:#1a0033;--bg2:#000;--glow:#ff00ff;}
-body.neon{--bg1:#0f0020;--bg2:#000;--glow:#00ffff;}
-body.dark{--bg1:#111;--bg2:#000;--glow:#666;}
+/* 🎨 ТЕМЫ */
+body.space{
+background: radial-gradient(circle at top, #1a0033, #000 70%);
+--glow:#ff00ff;
+}
 
+body.neon{
+background: radial-gradient(circle at top, #0f0020, #000 70%);
+--glow:#00ffff;
+}
+
+body.dark{
+background: radial-gradient(circle at top, #111, #000 70%);
+--glow:#888;
+}
+
+/* 🧠 ТЕКСТ */
 .title{
 position:absolute;
 top:10px;
@@ -29,10 +33,11 @@ transform:translateX(-50%);
 opacity:.8;
 }
 
+/* 🎛 кнопки тем */
 .themes{
 position:absolute;
 top:10px;
-left:10px;
+left:80px;
 display:flex;
 gap:8px;
 }
@@ -46,6 +51,7 @@ border-radius:8px;
 cursor:pointer;
 }
 
+/* 🎰 SPIN */
 .spin{
 position:absolute;
 top:50px;
@@ -54,11 +60,12 @@ transform:translateX(-50%);
 padding:12px 36px;
 border:none;
 border-radius:10px;
-background:var(--accent);
+background:#7c3aed;
 color:#fff;
 cursor:pointer;
 }
 
+/* 🎡 РУЛЕТКА */
 .main{
 position:absolute;
 left:50%;
@@ -91,6 +98,7 @@ padding:40px;
 will-change:transform;
 }
 
+/* 🎴 карточки */
 .card{
 min-width:320px;
 height:150px;
@@ -99,20 +107,17 @@ display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
-background:var(--card);
+background:rgba(255,255,255,.05);
 border:1px solid rgba(255,255,255,.1);
-}
-
-.card:hover{
-transform:scale(1.03);
 }
 
 .badge{
 font-size:12px;
-opacity:.8;
+opacity:.7;
 margin-top:6px;
 }
 
+/* 🎯 результат */
 .result{
 position:absolute;
 left:50%;
@@ -121,4 +126,32 @@ transform:translateX(-50%);
 font-size:26px;
 opacity:0;
 transition:.3s;
+}
+
+/* 🔴 YOUTUBE */
+.yt{
+position:fixed;
+right:20px;
+top:20px;
+padding:10px 14px;
+background:red;
+color:#fff;
+text-decoration:none;
+border-radius:10px;
+font-weight:bold;
+z-index:1000;
+}
+
+/* 🟣 TWITCH */
+.tw{
+position:fixed;
+left:20px;
+top:20px;
+padding:10px 14px;
+background:#7c3aed;
+color:#fff;
+text-decoration:none;
+border-radius:10px;
+font-weight:bold;
+z-index:1000;
 }
