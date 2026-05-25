@@ -1,8 +1,8 @@
 :root{
---bg:#05010a;
---card:rgba(255,255,255,.05);
+--bg:#0b0b0f;
 --text:#fff;
 --accent:#7c3aed;
+--card:rgba(255,255,255,.05);
 --glow:#ff00ff;
 }
 
@@ -15,23 +15,26 @@ color:var(--text);
 transition:.4s;
 }
 
-/* THEMES (НЕ ЛОМАЮТ UI) */
+/* THEMES */
 body.space{
 --bg:radial-gradient(circle,#1a0033,#000);
---text:#ffffff;
+--text:#fff;
 --accent:#7c3aed;
+--glow:#ff00ff;
 }
 
 body.neon{
---bg:linear-gradient(120deg,#12002a,#2a0050,#000);
---text:#d7d7ff;
+--bg:linear-gradient(120deg,#0f0020,#2b0055,#000);
+--text:#d7e6ff;
 --accent:#00d4ff;
+--glow:#00ffff;
 }
 
 body.dark{
 --bg:#050505;
---text:#eaeaea;
+--text:#ddd;
 --accent:#444;
+--glow:#666;
 }
 
 .title{
@@ -39,9 +42,7 @@ position:absolute;
 top:10px;
 left:50%;
 transform:translateX(-50%);
-letter-spacing:4px;
 opacity:.8;
-color:var(--text);
 }
 
 .spin{
@@ -51,9 +52,9 @@ left:50%;
 transform:translateX(-50%);
 padding:12px 36px;
 border:none;
-border-radius:10px;
 background:var(--accent);
 color:#fff;
+border-radius:10px;
 cursor:pointer;
 }
 
@@ -64,10 +65,10 @@ top:55%;
 transform:translate(-50%,-50%);
 width:1500px;
 height:240px;
-border-radius:18px;
 background:rgba(255,255,255,.03);
 backdrop-filter:blur(14px);
 overflow:hidden;
+border-radius:18px;
 }
 
 .pointer{
@@ -78,14 +79,14 @@ transform:translateX(-50%);
 width:4px;
 height:100%;
 background:var(--glow);
-box-shadow:0 0 18px var(--glow);
+box-shadow:0 0 20px var(--glow);
 }
 
 .roulette{
 display:flex;
 gap:14px;
 padding:40px;
-transition:transform 4.8s cubic-bezier(.05,.9,.1,1);
+transition:transform 4.5s cubic-bezier(.05,.9,.1,1);
 will-change:transform;
 }
 
@@ -94,20 +95,18 @@ min-width:320px;
 height:150px;
 border-radius:14px;
 display:flex;
-flex-direction:column;
 align-items:center;
 justify-content:center;
 background:var(--card);
 border:1px solid rgba(255,255,255,.1);
-color:var(--text);
 text-align:center;
+flex-direction:column;
 }
 
 .badge{
 font-size:12px;
 opacity:.8;
 margin-top:6px;
-color:var(--text);
 }
 
 .result{
@@ -118,19 +117,17 @@ transform:translateX(-50%);
 font-size:26px;
 opacity:0;
 transition:.3s;
-color:var(--text);
 }
 
-/* SETTINGS */
 .settings{
 position:absolute;
 top:15px;
 right:15px;
 width:42px;
 height:42px;
+border:none;
 border-radius:10px;
 background:var(--accent);
-border:none;
 cursor:pointer;
 }
 
@@ -138,11 +135,11 @@ cursor:pointer;
 position:absolute;
 right:15px;
 top:70px;
-width:260px;
+width:250px;
 background:rgba(0,0,0,.6);
 backdrop-filter:blur(12px);
-border-radius:12px;
 padding:12px;
+border-radius:12px;
 display:none;
 }
 
@@ -150,19 +147,19 @@ display:none;
 width:100%;
 margin-top:8px;
 padding:8px;
-border-radius:8px;
-border:none;
 background:#111;
+border:none;
 color:#fff;
+border-radius:8px;
 }
 
 .panel button{
 width:100%;
 margin-top:10px;
 padding:8px;
-background:var(--accent);
 border:none;
-border-radius:8px;
+background:var(--accent);
 color:#fff;
+border-radius:8px;
 cursor:pointer;
 }
