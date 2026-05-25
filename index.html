@@ -17,15 +17,13 @@
 
 <div class="panel"id="panel">
 
-<select id="theme"onchange="setTheme(this.value)">
+<select onchange="theme(this.value)">
 <option value="space">SPACE</option>
 <option value="neon">NEON</option>
 <option value="dark">DARK</option>
 </select>
 
-<input id="speed"type="range"min="3"max="8"step="0.5"value="5">
-
-<input id="gameName"placeholder="Игра">
+<input id="name"placeholder="Игра">
 <select id="rarity">
 <option>обычная</option>
 <option>хорошая</option>
@@ -33,7 +31,20 @@
 <option>легендарная</option>
 </select>
 
-<button onclick="add()">Добавить игру</button>
+<select id="level">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3">3</option>
+<option value="4">4</option>
+<option value="5">5</option>
+<option value="6">6</option>
+<option value="7">7</option>
+<option value="8">8</option>
+<option value="9">9</option>
+<option value="10">10</option>
+</select>
+
+<button onclick="add()">Добавить</button>
 
 </div>
 
@@ -65,7 +76,6 @@ render();
 
 /* RENDER */
 function render(){
-
 r.innerHTML="";
 
 let pool=[];
@@ -74,37 +84,39 @@ for(let i=0;i<18;i++) pool.push(...db);
 pool.forEach(g=>{
 let el=document.createElement("div");
 el.className="card";
-el.innerHTML=`${g.name}<br>${g.rarity}`;
+el.innerHTML=`
+<div>${g.name}</div>
+<div class="badge">⭐ ${g.rarity} | LVL ${g.level}</div>
+`;
 r.appendChild(el);
 });
-
 }
 
-/* ADD GAME */
+/* ADD */
 function add(){
-let n=document.getElementById("gameName").value;
+let n=document.getElementById("name").value;
 let rr=document.getElementById("rarity").value;
+let lv=document.getElementById("level").value;
 
-db.push({name:n,rarity:rr});
+if(!n)return;
+
+db.push({name:n,rarity:rr,level:lv});
 render();
 }
 
-/* THEME */
-function setTheme(t){
-document.body.className=t;
-}
-
-/* PANEL */
-function toggle(){
-let p=document.getElementById("panel");
-p.style.display=p.style.display==="block"?"none":"block";
+/* THEME FIXED */
+function theme(t){
+document.body.className="";
+document.body.classList.add(t);
 }
 
 /* PICK */
 function pick(){
 let pool=[];
+
 db.forEach(g=>{
 let w=1;
+
 if(g.rarity==="обычная")w=6;
 if(g.rarity==="хорошая")w=4;
 if(g.rarity==="отличная")w=2;
@@ -112,10 +124,11 @@ if(g.rarity==="легендарная")w=0.6;
 
 for(let i=0;i<w*10;i++)pool.push(g);
 });
+
 return pool[Math.floor(Math.random()*pool.length)];
 }
 
-/* SPIN FAST + LONG MOVE */
+/* 🔥 FIXED SPIN */
 function spin(){
 
 if(spinning)return;
@@ -126,17 +139,13 @@ res.style.opacity=0;
 sound.currentTime=0;
 sound.play();
 
-/* speed from UI */
-let speed=document.getElementById("speed").value;
-document.documentElement.style.setProperty("--speed",speed+"s");
-
 /* reset */
 r.style.transition="none";
 r.style.transform="translateX(0px)";
 
 setTimeout(()=>{
 
-r.style.transition=`transform ${speed}s cubic-bezier(.05,.9,.1,1)`;
+r.style.transition="transform 4.8s cubic-bezier(.05,.9,.1,1)";
 
 let cards=[...document.querySelectorAll(".card")];
 let chosen=pick();
@@ -144,21 +153,23 @@ let chosen=pick();
 let el=cards.find(c=>c.innerText.includes(chosen.name));
 if(!el) el=cards[0];
 
-/* LONG SPIN BOOST (важно!) */
-let baseOffset=
-el.offsetLeft + el.offsetWidth/2
-- window.innerWidth/2;
+/* ✔ SAFE CENTER (без window bug) */
+const main=document.querySelector(".main");
+const center=main.offsetWidth/2;
 
-/* добавляем “докрутку” чтобы реально крутилось */
-let extraSpin = 3000 + Math.random()*2000;
+const offset=
+el.offsetLeft + el.offsetWidth/2 - center;
 
-let offset = baseOffset + extraSpin;
+/* небольшая живость */
+const jitter=(Math.random()*30-15);
 
-r.style.transform=`translateX(-${offset}px)`;
+r.style.transform=`translateX(-${offset+jitter}px)`;
 
 setTimeout(()=>{
 
-res.innerHTML=`🎮 ${chosen.name}<br>${chosen.rarity}`;
+res.innerHTML=
+`🎮 ${chosen.name}<br>⭐ ${chosen.rarity} | LVL ${chosen.level}`;
+
 res.style.opacity=1;
 
 sound.pause();
@@ -166,9 +177,9 @@ sound.currentTime=0;
 
 spinning=false;
 
-},speed*1000);
+},4800);
 
-},50);
+},40);
 
 }
 
