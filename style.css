@@ -1,40 +1,39 @@
 :root{
---bg:#0b0b0f;
+--bg1:#0b0b0f;
+--bg2:#000;
 --text:#fff;
 --accent:#7c3aed;
---card:rgba(255,255,255,.05);
 --glow:#ff00ff;
+--card:rgba(255,255,255,.05);
+--speed:4.5s;
 }
 
 body{
 margin:0;
 overflow:hidden;
 font-family:Arial;
-background:var(--bg);
 color:var(--text);
+background:radial-gradient(circle,var(--bg1),var(--bg2));
 transition:.4s;
 }
 
-/* THEMES */
+/* THEMES SAFE */
 body.space{
---bg:radial-gradient(circle,#1a0033,#000);
---text:#fff;
---accent:#7c3aed;
+--bg1:#1a0033;
+--bg2:#000;
 --glow:#ff00ff;
 }
 
 body.neon{
---bg:linear-gradient(120deg,#0f0020,#2b0055,#000);
---text:#d7e6ff;
---accent:#00d4ff;
+--bg1:#0f0020;
+--bg2:#000;
 --glow:#00ffff;
 }
 
 body.dark{
---bg:#050505;
---text:#ddd;
---accent:#444;
---glow:#666;
+--bg1:#111;
+--bg2:#000;
+--glow:#777;
 }
 
 .title{
@@ -52,9 +51,9 @@ left:50%;
 transform:translateX(-50%);
 padding:12px 36px;
 border:none;
+border-radius:10px;
 background:var(--accent);
 color:#fff;
-border-radius:10px;
 cursor:pointer;
 }
 
@@ -65,10 +64,10 @@ top:55%;
 transform:translate(-50%,-50%);
 width:1500px;
 height:240px;
+border-radius:18px;
 background:rgba(255,255,255,.03);
 backdrop-filter:blur(14px);
 overflow:hidden;
-border-radius:18px;
 }
 
 .pointer{
@@ -86,7 +85,7 @@ box-shadow:0 0 20px var(--glow);
 display:flex;
 gap:14px;
 padding:40px;
-transition:transform 4.5s cubic-bezier(.05,.9,.1,1);
+transition:transform var(--speed) cubic-bezier(.05,.9,.1,1);
 will-change:transform;
 }
 
@@ -95,12 +94,11 @@ min-width:320px;
 height:150px;
 border-radius:14px;
 display:flex;
+flex-direction:column;
 align-items:center;
 justify-content:center;
 background:var(--card);
 border:1px solid rgba(255,255,255,.1);
-text-align:center;
-flex-direction:column;
 }
 
 .badge{
@@ -135,7 +133,7 @@ cursor:pointer;
 position:absolute;
 right:15px;
 top:70px;
-width:250px;
+width:260px;
 background:rgba(0,0,0,.6);
 backdrop-filter:blur(12px);
 padding:12px;
@@ -143,13 +141,13 @@ border-radius:12px;
 display:none;
 }
 
-.panel select,.panel input{
+.panel input,.panel select{
 width:100%;
 margin-top:8px;
 padding:8px;
 background:#111;
-border:none;
 color:#fff;
+border:none;
 border-radius:8px;
 }
 
@@ -157,9 +155,9 @@ border-radius:8px;
 width:100%;
 margin-top:10px;
 padding:8px;
-border:none;
 background:var(--accent);
-color:#fff;
+border:none;
 border-radius:8px;
+color:#fff;
 cursor:pointer;
 }
