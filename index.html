@@ -3,22 +3,94 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport"content="width=device-width,initial-scale=1.0">
-<title>Stream Roulette FIXED</title>
+<title>РУЛЕТКА</title>
 
 <style>
 
 body{
 margin:0;
 overflow:hidden;
-background:#05010a;
 font-family:Arial;
+color:#fff;
+transition:0.6s;
+}
+
+/* THEMES */
+body.space{background:radial-gradient(circle,#12002a,#000);}
+body.neon{background:linear-gradient(120deg,#0f0f2d,#1a0033,#000);}
+body.dark{background:#050505;}
+
+/* TOP TITLE */
+.title{
+position:absolute;
+top:10px;
+left:50%;
+transform:translateX(-50%);
+font-size:22px;
+font-weight:800;
+letter-spacing:3px;
+}
+
+/* SPIN */
+.spin{
+position:absolute;
+top:50px;
+left:50%;
+transform:translateX(-50%);
+padding:14px 40px;
+border:none;
+border-radius:12px;
+background:#7c3aed;
+color:#fff;
+cursor:pointer;
+font-size:18px;
+}
+
+/* SETTINGS */
+.settingsBtn{
+position:absolute;
+top:15px;
+right:15px;
+width:45px;
+height:45px;
+border-radius:10px;
+border:none;
+background:#7c3aed;
+color:#fff;
+cursor:pointer;
+}
+
+.panel{
+position:absolute;
+right:15px;
+top:70px;
+width:280px;
+background:rgba(0,0,0,.6);
+backdrop-filter:blur(12px);
+border-radius:14px;
+padding:12px;
+display:none;
+}
+
+.panel input,.panel select{
+width:100%;
+padding:8px;
+margin-top:8px;
+border:none;
+border-radius:8px;
+background:#111;
 color:#fff;
 }
 
-.bg{
-position:absolute;
-inset:0;
-background:radial-gradient(circle,#12002a,#000);
+.panel button{
+width:100%;
+margin-top:10px;
+padding:8px;
+border:none;
+border-radius:8px;
+background:#7c3aed;
+color:#fff;
+cursor:pointer;
 }
 
 /* MAIN */
@@ -44,7 +116,6 @@ width:4px;
 height:100%;
 background:#ff00ff;
 box-shadow:0 0 20px #ff00ff;
-z-index:10;
 }
 
 .roulette{
@@ -52,7 +123,6 @@ display:flex;
 gap:18px;
 padding:45px;
 transition:transform 10s cubic-bezier(.1,.85,.1,1);
-will-change:transform;
 }
 
 .card{
@@ -65,69 +135,6 @@ align-items:center;
 justify-content:center;
 background:rgba(255,255,255,.05);
 border:1px solid rgba(255,255,255,.1);
-font-size:18px;
-text-align:center;
-}
-
-/* BUTTONS */
-.spin{
-position:absolute;
-top:15px;
-left:50%;
-transform:translateX(-50%);
-padding:14px 40px;
-border:none;
-border-radius:12px;
-background:#7c3aed;
-color:#fff;
-font-size:18px;
-cursor:pointer;
-}
-
-.settingsBtn{
-position:absolute;
-top:15px;
-right:15px;
-width:44px;
-height:44px;
-border-radius:10px;
-border:none;
-background:#7c3aed;
-color:#fff;
-cursor:pointer;
-}
-
-.panel{
-position:absolute;
-right:15px;
-top:70px;
-width:260px;
-background:rgba(0,0,0,.6);
-backdrop-filter:blur(12px);
-border-radius:14px;
-padding:12px;
-display:none;
-}
-
-.panel input, .panel select{
-width:100%;
-margin-top:8px;
-padding:8px;
-border-radius:8px;
-border:none;
-background:#111;
-color:#fff;
-}
-
-.panel button{
-width:100%;
-margin-top:10px;
-padding:8px;
-border:none;
-border-radius:8px;
-background:#7c3aed;
-color:#fff;
-cursor:pointer;
 }
 
 /* RESULT */
@@ -142,48 +149,62 @@ transition:.3s;
 text-align:center;
 }
 
-/* SOCIAL */
-.left{
+/* SOCIAL ICONS */
+.social{
 position:absolute;
-bottom:20px;
-left:20px;
-padding:10px 14px;
-background:rgba(0,0,0,.4);
-border-radius:10px;
-text-decoration:none;
-color:#fff;
+bottom:15px;
+width:100%;
+display:flex;
+justify-content:space-between;
+padding:0 20px;
 }
 
-.right{
-position:absolute;
-bottom:20px;
-right:20px;
-padding:10px 14px;
-background:rgba(0,0,0,.4);
-border-radius:10px;
+.social a{
 text-decoration:none;
 color:#fff;
+padding:10px 14px;
+border-radius:10px;
+background:rgba(0,0,0,.4);
+backdrop-filter:blur(10px);
+display:flex;
+align-items:center;
+gap:8px;
+}
+
+/* ICON STYLE */
+.icon{
+width:18px;
+height:18px;
 }
 
 </style>
 </head>
 
-<body>
+<body class="space">
 
-<div class="bg"></div>
+<div class="title">РУЛЕТКА</div>
 
 <button class="spin"onclick="spin()">SPIN</button>
 <button class="settingsBtn"onclick="toggle()">⚙</button>
 
 <div class="panel"id="panel">
-<input id="name"placeholder="Game name">
+
+<input id="name"placeholder="Игра">
 <select id="rarity">
 <option>обычная</option>
 <option>хорошая</option>
 <option>отличная</option>
 <option>легендарная</option>
 </select>
+
 <button onclick="add()">Добавить игру</button>
+
+<hr>
+
+<button onclick="theme('space')">SPACE</button>
+<button onclick="theme('neon')">NEON</button>
+<button onclick="theme('dark')">DARK</button>
+
 </div>
 
 <div class="main">
@@ -193,39 +214,43 @@ color:#fff;
 
 <div class="result"id="res"></div>
 
-<a class="left" href="https://www.twitch.tv/azraellonelive" target="_blank">
-TWITCH
+<!-- SOCIAL -->
+<div class="social">
+
+<a href="https://www.twitch.tv/azraellonelive"target="_blank">
+<img class="icon"src="https://cdn-icons-png.flaticon.com/512/5968/5968819.png">
+Twitch
 </a>
 
-<a class="right" href="https://www.youtube.com/@AzraelLone" target="_blank">
-YOUTUBE
+<a href="https://www.youtube.com/@AzraelLone"target="_blank">
+<img class="icon"src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png">
+YouTube
 </a>
 
-<audio id="sound" src="1.mp3"></audio>
+</div>
+
+<audio id="sound"src="1.mp3"></audio>
 
 <script>
 
-let games=[
+let games=JSON.parse(localStorage.getItem("games"))||[
 {name:"Minecraft",rarity:"отличная"},
 {name:"Elden Ring",rarity:"легендарная"},
-{name:"GTA V",rarity:"отличная"},
-{name:"Hello Neighbor",rarity:"обычная"}
+{name:"GTA V",rarity:"отличная"}
 ];
 
 const r=document.getElementById("r");
 const res=document.getElementById("res");
-const sound=document.getElementById("sound");
 const panel=document.getElementById("panel");
+const sound=document.getElementById("sound");
 
 let spinning=false;
 
 /* RENDER */
 function render(){
-
 r.innerHTML="";
-
 let pool=[];
-for(let i=0;i<20;i++) pool.push(...games);
+for(let i=0;i<18;i++) pool.push(...games);
 
 pool.forEach(g=>{
 let d=document.createElement("div");
@@ -233,18 +258,17 @@ d.className="card";
 d.innerHTML=`${g.name}<br>${g.rarity}`;
 r.appendChild(d);
 });
-
 }
-
 render();
 
-/* ADD GAME */
+/* ADD */
 function add(){
 let n=document.getElementById("name").value;
-let rty=document.getElementById("rarity").value;
+let rr=document.getElementById("rarity").value;
 if(!n)return;
 
-games.push({name:n,rarity:rty});
+games.push({name:n,rarity:rr});
+localStorage.setItem("games",JSON.stringify(games));
 render();
 }
 
@@ -253,7 +277,12 @@ function toggle(){
 panel.style.display=panel.style.display==="block"?"none":"block";
 }
 
-/* WEIGHT */
+/* THEME */
+function theme(t){
+document.body.className=t;
+}
+
+/* PICK */
 function pick(){
 let pool=[];
 games.forEach(g=>{
@@ -268,7 +297,7 @@ for(let i=0;i<w*10;i++)pool.push(g);
 return pool[Math.floor(Math.random()*pool.length)];
 }
 
-/* FIXED CENTER SPIN */
+/* SPIN */
 function spin(){
 
 if(spinning)return;
@@ -290,13 +319,8 @@ let cards=[...document.querySelectorAll(".card")];
 
 let chosen=pick();
 
-/* НАЙТИ КАРТОЧКУ */
 let el=cards.find(c=>c.innerText.includes(chosen.name));
 
-let rect=el.getBoundingClientRect();
-let parentRect=r.getBoundingClientRect();
-
-/* ТОЧНЫЙ ЦЕНТР */
 let offset=
 (el.offsetLeft + el.offsetWidth/2)
 - window.innerWidth/2;
