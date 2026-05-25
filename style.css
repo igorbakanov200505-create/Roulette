@@ -3,31 +3,29 @@ margin:0;
 overflow:hidden;
 font-family:Arial;
 color:#fff;
-transition:0.5s;
+transition:.4s;
 }
 
 /* THEMES */
 body.space{background:radial-gradient(circle,#1a0033,#000);}
-body.neon{background:linear-gradient(120deg,#0f0f2d,#2a0040,#000);}
+body.neon{background:linear-gradient(120deg,#12002a,#2a0050,#000);}
 body.dark{background:#050505;}
 
-/* TOP */
 .title{
 position:absolute;
 top:10px;
 left:50%;
 transform:translateX(-50%);
 letter-spacing:4px;
-opacity:.7;
+opacity:.8;
 }
 
-/* SPIN */
 .spin{
 position:absolute;
 top:50px;
 left:50%;
 transform:translateX(-50%);
-padding:12px 34px;
+padding:12px 36px;
 border:none;
 border-radius:10px;
 background:#7c3aed;
@@ -35,7 +33,6 @@ color:#fff;
 cursor:pointer;
 }
 
-/* MAIN */
 .main{
 position:absolute;
 left:50%;
@@ -58,15 +55,14 @@ width:4px;
 height:100%;
 background:#ff00ff;
 box-shadow:0 0 18px #ff00ff;
-z-index:10;
 }
 
 .roulette{
 display:flex;
 gap:14px;
 padding:40px;
+transition:transform 4.8s cubic-bezier(.05,.9,.1,1);
 will-change:transform;
-transition:transform var(--speed,5s) cubic-bezier(.05,.9,.1,1);
 }
 
 .card{
@@ -74,6 +70,7 @@ min-width:320px;
 height:150px;
 border-radius:14px;
 display:flex;
+flex-direction:column;
 align-items:center;
 justify-content:center;
 background:rgba(255,255,255,.05);
@@ -81,7 +78,13 @@ border:1px solid rgba(255,255,255,.1);
 text-align:center;
 }
 
-/* RESULT */
+/* badges */
+.badge{
+font-size:12px;
+opacity:.8;
+margin-top:6px;
+}
+
 .result{
 position:absolute;
 left:50%;
@@ -92,13 +95,12 @@ opacity:0;
 transition:.3s;
 }
 
-/* SETTINGS */
 .settings{
 position:absolute;
 top:15px;
 right:15px;
-width:40px;
-height:40px;
+width:42px;
+height:42px;
 border-radius:10px;
 background:#7c3aed;
 border:none;
